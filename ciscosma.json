@@ -1,0 +1,65 @@
+
+
+{
+    "appid": "44a028fe-e612-4bed-8486-1e136ab5b5c2",
+    "name": "Cisco SMA",
+    "description": "App integration for Cisco SMA, Secure Email and Web Manager",
+    "type": "information",
+    "product_vendor": "Cisco",
+    "logo": "logo_cisco.svg",
+    "logo_dark": "logo_cisco_dark.svg",
+    "product_name": "Cisco SMA",
+    "product_version_regex": ".*",
+    "publisher": "Splunk",
+    "contributors": [
+        {
+            "name": "Gary Ian Rokas"
+        }
+    ],
+    "license": "Copyright (c) 2024 Splunk Inc.",
+    "app_version": "1.0.0",
+    "latest_tested_versions": [
+        "On-prem, Version 15.5.1, API v2.0 (/sma/api/v2.0), December 2024"
+    ],
+    "utctime_updated": "2024-12-10T00:00:00.000000Z",
+    "package_name": "phantom_ciscosma",
+    "main_module": "ciscosma_connector.py",
+    "app_config_render": "default",
+    "min_phantom_version": "6.3.0",
+    "python_version": "3",
+    "fips_compliant": true,
+    "app_wizard_version": "1.0.0",
+    "configuration": {
+        "host": {
+            "data_type": "string",
+            "order": 0,
+            "description": "Hostname or IP address of Cisco SMA",
+            "required": true
+        },
+        "username": {
+            "data_type": "string",
+            "order": 1,
+            "description": "Username for host",
+            "required": true
+        },
+        "password": {
+            "data_type": "password",
+            "order": 2,
+            "description": "Password for host",
+            "required": true
+        }
+    },
+    "actions": [
+        {
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "verbose": "",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        }
+    ]
+}
