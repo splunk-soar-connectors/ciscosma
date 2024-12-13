@@ -63,7 +63,6 @@
             "action": "get message details",
             "identifier": "get_message_details",
             "description": "Retrieve details of a quarantined message",
-            "verbose": "Retrieve specific detailed message information from quarantine",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -85,7 +84,8 @@
                 },
                 {
                     "data_path": "action_result.data.*.mid",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "contains": ["cisco sma message id"]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.subject",
@@ -97,19 +97,23 @@
                 },
                 {
                     "data_path": "action_result.data.*.attributes.fromAddress",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["email"]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.toAddress",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["email"]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.envelopeRecipient",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["email"]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.attachments",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["file_name"]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.messageBody",
@@ -117,6 +121,193 @@
                 },
                 {
                     "data_path": "action_result.summary.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get tracking details",
+            "identifier": "get_message_tracking_details",
+            "description": "Retrieve detailed tracking information for a message",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "mid": {
+                    "description": "Message ID (mid) to retrieve details for",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 0
+                },
+                "icid": {
+                    "description": "Incoming Connection ID",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 1
+                },
+                "serial_number": {
+                    "description": "Appliance serial number",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 2
+                },
+                "start_date": {
+                    "description": "Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 3
+                },
+                "end_date": {
+                    "description": "End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 4
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.mid",
+                    "data_type": "string"                },
+                {
+                    "data_path": "action_result.parameter.icid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.serial_number",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.start_date",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.end_date",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.mid",
+                    "data_type": "numeric",
+                    "contains": ["cisco sma message id"]
+                },
+                {
+                    "data_path": "action_result.data.*.subject",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.messageStatus",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.direction",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.sender",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.recipient",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.attachments",
+                    "data_type": "string",
+                    "contains": ["file_name"]
+                },
+                {
+                    "data_path": "action_result.data.*.smtpAuthId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.midHeader",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.timestamp",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.hostName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.sendingHostSummary.reverseDnsHostname",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.sendingHostSummary.ipAddress",
+                    "data_type": "string",
+                    "contains": ["ip"]
+                },
+                {
+                    "data_path": "action_result.data.*.sendingHostSummary.sbrsScore",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.summary.*.timestamp",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.summary.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.summary.*.lastEvent",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.messageSize",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.isCompleteData",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.showDLP",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.showAMP",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.showURL",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.showSummaryTimeBox",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.mailPolicy",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.senderGroup",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.direction",
                     "data_type": "string"
                 },
                 {

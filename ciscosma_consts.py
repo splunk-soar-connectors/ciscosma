@@ -17,6 +17,7 @@
 
 CISCOSMA_GET_TOKEN_ENDPOINT = "/sma/api/v2.0/login"
 CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT = "/sma/api/v2.0/quarantine/messages/details"
+CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT = "/sma/api/v2.0/message-tracking/details"
 
 
 # Future endpoints

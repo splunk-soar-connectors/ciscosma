@@ -22,7 +22,7 @@ import requests
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from ciscosma_consts import CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT, CISCOSMA_GET_TOKEN_ENDPOINT
+from ciscosma_consts import CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT, CISCOSMA_GET_TOKEN_ENDPOINT, CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT
 
 
 class CiscoSmaConnector(BaseConnector):
@@ -175,6 +175,58 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message details")
 
+    def _handle_get_message_tracking_details(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        mid = param.get('mid')
+        if not mid:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'mid' is required")
+
+        icid = param.get('icid')
+        serial_number = param.get('serial_number')
+        start_date = param.get('start_date')
+        end_date = param.get('end_date')
+
+        params = {'mid': mid}
+        if icid:
+            params['icid'] = icid
+        if serial_number:
+            params['serialNumber'] = serial_number
+        if start_date:
+            params['startDate'] = start_date
+        if end_date:
+            params['endDate'] = end_date
+
+        ret_val, response = self._make_authenticated_request(
+            action_result,
+            CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
+            params=params
+        )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            message_data = response.get('data', {}).get('messages', {})
+            action_result.add_data(message_data)
+        except Exception as e:
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                f"Error parsing response: {str(e)}"
+            )
+
+        summary = {
+            'subject': message_data.get('subject'),
+            'status': message_data.get('messageStatus'),
+            'direction': message_data.get('direction')
+        }
+        action_result.update_summary(summary)
+
+        return action_result.set_status(
+            phantom.APP_SUCCESS,
+            "Successfully retrieved message tracking details"
+        )
+
     def initialize(self):
         config = self.get_config()
         self._base_url = config["host"].rstrip("/")
@@ -186,7 +238,11 @@ class CiscoSmaConnector(BaseConnector):
     def handle_action(self, param):
         self.debug_print("action_id ", self.get_action_identifier())
 
-        action_mapping = {"test_connectivity": self._handle_test_connectivity, "get_message_details": self._handle_get_message_details}
+        action_mapping = {
+            "test_connectivity": self._handle_test_connectivity,
+            "get_message_details": self._handle_get_message_details,
+            "get_message_tracking_details": self._handle_get_message_tracking_details
+        }
 
         action = self.get_action_identifier()
         action_execution_status = phantom.APP_SUCCESS
