@@ -16,3 +16,22 @@
 # Cisco SMA Constants
 
 CISCOSMA_GET_TOKEN_ENDPOINT = "/sma/api/v2.0/login"
+CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT = "/sma/api/v2.0/quarantine/messages/details"
+
+
+# Future endpoints
+# GET /api/v2.0/reporting/report?resource_attribute
+# GET /api/v2.0/reporting/report/counter?resource_attribute
+
+# GET/sma/api/v2.0/message-tracking/messages?resource_attribute
+
+# GET /api/v2.0/quarantine/messages?resource_attribute
+# GET /api/v2.0/quarantine/messages?resource_attribute(search)
+# GET /api/v2.0/quarantine/messages?resource_attribute(download attachment -> possible)
+# POST /api/v2.0/quarantine/messages?resource_attribute (release)
+
+# POST /api/v2.0/quarantine/safelist?resource_attribute
+# POST /api/v2.0/quarantine/blocklist?resource_attribute
+
+# DELETE /api/v2.0/quarantine/safelist?resource_attribute
+# DELETE /api/v2.0/quarantine/blocklist?resource_attribute

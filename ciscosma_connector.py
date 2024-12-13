@@ -22,7 +22,7 @@ import requests
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from ciscosma_consts import CISCOSMA_GET_TOKEN_ENDPOINT
+from ciscosma_consts import CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT, CISCOSMA_GET_TOKEN_ENDPOINT
 
 
 class CiscoSmaConnector(BaseConnector):
@@ -149,6 +149,32 @@ class CiscoSmaConnector(BaseConnector):
         self.save_progress("Test Connectivity Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_message_details(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        message_id = param.get("message_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
+
+        endpoint = CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT
+        params = {"mid": message_id, "quarantineType": "spam"}
+
+        ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            message_data = response.get("data", {})
+            action_result.add_data(message_data)
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        summary = {"subject": message_data.get("attributes", {}).get("subject")}
+        action_result.update_summary(summary)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message details")
+
     def initialize(self):
         config = self.get_config()
         self._base_url = config["host"].rstrip("/")
@@ -158,10 +184,19 @@ class CiscoSmaConnector(BaseConnector):
         return phantom.APP_SUCCESS
 
     def handle_action(self, param):
+        self.debug_print("action_id ", self.get_action_identifier())
+
+        action_mapping = {"test_connectivity": self._handle_test_connectivity, "get_message_details": self._handle_get_message_details}
+
         action = self.get_action_identifier()
-        if action == "test_connectivity":
-            return self._handle_test_connectivity(param)
-        return phantom.APP_ERROR
+        action_execution_status = phantom.APP_SUCCESS
+
+        action_keys = list(action_mapping.keys())
+        if action in action_keys:
+            action_function = action_mapping[action]
+            action_execution_status = action_function(param)
+
+        return action_execution_status
 
 
 if __name__ == "__main__":
