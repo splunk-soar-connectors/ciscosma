@@ -15,9 +15,14 @@
 
 # Cisco SMA Constants
 
+CISCOSMA_VALID_ORDER_BY = ["from_address", "to_address", "subject"]
+CISCOSMA_VALID_ORDER_DIRECTIONS = ["asc", "desc"]
+CISCOSMA_VALID_FILTER_OPERATORS = ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
+
 CISCOSMA_GET_TOKEN_ENDPOINT = "/sma/api/v2.0/login"
 CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT = "/sma/api/v2.0/quarantine/messages/details"
 CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT = "/sma/api/v2.0/message-tracking/details"
+CISCOSMA_SEARCH_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 
 
 # Future endpoints

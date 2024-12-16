@@ -22,7 +22,15 @@ import requests
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
-from ciscosma_consts import CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT, CISCOSMA_GET_TOKEN_ENDPOINT, CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT
+from ciscosma_consts import (
+    CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT,
+    CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
+    CISCOSMA_GET_TOKEN_ENDPOINT,
+    CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
+    CISCOSMA_VALID_FILTER_OPERATORS,
+    CISCOSMA_VALID_ORDER_BY,
+    CISCOSMA_VALID_ORDER_DIRECTIONS,
+)
 
 
 class CiscoSmaConnector(BaseConnector):
@@ -149,6 +157,74 @@ class CiscoSmaConnector(BaseConnector):
         self.save_progress("Test Connectivity Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_search_quarantine_messages(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        start_date = param.get("start_date")
+        end_date = param.get("end_date")
+        if not start_date or not end_date:
+            return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
+
+        params = {"startDate": start_date, "endDate": end_date, "quarantineType": "spam"}
+
+        order_by = param.get("order_by")
+        order_dir = param.get("order_direction")
+        offset = param.get("offset")
+        limit = param.get("limit")
+        envelope_recipient_operator = param.get("envelope_recipient_filter_operator")
+        envelope_recipient_value = param.get("envelope_recipient_filter_value")
+        filter_operator = param.get("filter_operator")
+        filter_value = param.get("filter_value")
+
+        if order_by and order_by not in CISCOSMA_VALID_ORDER_BY:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid 'order_by' parameter")
+
+        if order_dir and order_dir not in CISCOSMA_VALID_ORDER_DIRECTIONS:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid 'order_direction' parameter")
+
+        if envelope_recipient_operator and envelope_recipient_operator not in CISCOSMA_VALID_FILTER_OPERATORS:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid 'envelope_recipient_filter_operator' parameter")
+
+        if filter_operator and filter_operator not in CISCOSMA_VALID_FILTER_OPERATORS:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid 'filter_operator' parameter")
+
+        if offset:
+            params["offset"] = offset
+        if limit:
+            params["limit"] = limit
+        if order_by:
+            params["orderBy"] = order_by
+        if order_dir:
+            params["orderDir"] = order_dir
+        if envelope_recipient_operator:
+            params["envelopeRecipientFilterOperator"] = envelope_recipient_operator
+        if envelope_recipient_value:
+            params["envelopeRecipientFilterValue"] = envelope_recipient_value
+        if filter_operator:
+            params["filterOperator"] = filter_operator
+        if filter_value:
+            params["filterValue"] = filter_value
+
+        ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_SEARCH_MESSAGES_ENDPOINT, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            messages = response.get("data", [])
+            total_count = response.get("meta", {}).get("totalCount", 0)
+
+            for message in messages:
+                action_result.add_data(message)
+
+            summary = {"total_messages": total_count, "messages_returned": len(messages)}
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved messages")
+
     def _handle_get_message_details(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -178,54 +254,44 @@ class CiscoSmaConnector(BaseConnector):
     def _handle_get_message_tracking_details(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        mid = param.get('mid')
+        mid = param.get("mid")
         if not mid:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'mid' is required")
 
-        icid = param.get('icid')
-        serial_number = param.get('serial_number')
-        start_date = param.get('start_date')
-        end_date = param.get('end_date')
+        icid = param.get("icid")
+        serial_number = param.get("serial_number")
+        start_date = param.get("start_date")
+        end_date = param.get("end_date")
 
-        params = {'mid': mid}
+        params = {"mid": mid}
         if icid:
-            params['icid'] = icid
+            params["icid"] = icid
         if serial_number:
-            params['serialNumber'] = serial_number
+            params["serialNumber"] = serial_number
         if start_date:
-            params['startDate'] = start_date
+            params["startDate"] = start_date
         if end_date:
-            params['endDate'] = end_date
+            params["endDate"] = end_date
 
-        ret_val, response = self._make_authenticated_request(
-            action_result,
-            CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
-            params=params
-        )
+        ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT, params=params)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         try:
-            message_data = response.get('data', {}).get('messages', {})
+            message_data = response.get("data", {}).get("messages", {})
             action_result.add_data(message_data)
         except Exception as e:
-            return action_result.set_status(
-                phantom.APP_ERROR,
-                f"Error parsing response: {str(e)}"
-            )
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
 
         summary = {
-            'subject': message_data.get('subject'),
-            'status': message_data.get('messageStatus'),
-            'direction': message_data.get('direction')
+            "subject": message_data.get("subject"),
+            "status": message_data.get("messageStatus"),
+            "direction": message_data.get("direction"),
         }
         action_result.update_summary(summary)
 
-        return action_result.set_status(
-            phantom.APP_SUCCESS,
-            "Successfully retrieved message tracking details"
-        )
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message tracking details")
 
     def initialize(self):
         config = self.get_config()
@@ -241,7 +307,8 @@ class CiscoSmaConnector(BaseConnector):
         action_mapping = {
             "test_connectivity": self._handle_test_connectivity,
             "get_message_details": self._handle_get_message_details,
-            "get_message_tracking_details": self._handle_get_message_tracking_details
+            "get_message_tracking_details": self._handle_get_message_tracking_details,
+            "search_quarantine_messages": self._handle_search_quarantine_messages,
         }
 
         action = self.get_action_identifier()
