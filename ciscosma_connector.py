@@ -27,6 +27,7 @@ from ciscosma_consts import (
     CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
     CISCOSMA_GET_TOKEN_ENDPOINT,
     CISCOSMA_RELEASE_MESSAGES_ENDPOINT,
+    CISCOSMA_DELETE_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
     CISCOSMA_VALID_FILTER_OPERATORS,
@@ -284,6 +285,49 @@ class CiscoSmaConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully released message")
+
+    def _handle_delete_email(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        message_id = param.get("message_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
+
+        # TODO: Replace with validator function
+        try:
+            message_id = int(message_id)
+        except ValueError:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' must be a valid integer")
+
+        payload = {
+            "quarantineType": "spam",
+            "mids": [message_id]
+        }
+
+        ret_val, response = self._make_authenticated_request(
+            action_result,
+            CISCOSMA_DELETE_MESSAGES_ENDPOINT,
+            json_data=payload,
+            method="delete"
+        )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            delete_data = response.get("data", {})
+            action_result.add_data(delete_data)
+
+            summary = {
+                "total_deleted": delete_data.get("totalCount", 0),
+                "action": delete_data.get("action")
+            }
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully deleted message")
 
     def _handle_search_tracking_messages(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
