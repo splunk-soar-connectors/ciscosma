@@ -295,6 +295,53 @@
             "versions": "EQ(*)"
         },
         {
+            "action": "release email",
+            "identifier": "release_email",
+            "description": "Release a quarantined email message",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "message_id": {
+                    "description": "Message ID (mid) to release",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 0,
+                    "contains": ["cisco sma message id"]
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.message_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.totalCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.total_released",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.action",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
             "action": "search tracking messages",
             "identifier": "search_tracking_messages",
             "description": "Search for messages in message tracking",

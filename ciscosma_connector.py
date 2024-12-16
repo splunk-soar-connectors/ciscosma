@@ -26,6 +26,7 @@ from ciscosma_consts import (
     CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT,
     CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
     CISCOSMA_GET_TOKEN_ENDPOINT,
+    CISCOSMA_RELEASE_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
     CISCOSMA_VALID_FILTER_OPERATORS,
@@ -252,6 +253,38 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message details")
 
+    def _handle_release_email(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        message_id = param.get("message_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
+
+        # TODO: Replace with validator function
+        try:
+            message_id = int(message_id)
+        except ValueError:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' must be a valid integer")
+
+        payload = {"action": "release", "quarantineType": "spam", "mids": [message_id]}
+
+        ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_RELEASE_MESSAGES_ENDPOINT, json_data=payload, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            release_data = response.get("data", {})
+            action_result.add_data(release_data)
+
+            summary = {"total_released": release_data.get("totalCount", 0), "action": release_data.get("action")}
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully released message")
+
     def _handle_search_tracking_messages(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -358,6 +391,7 @@ class CiscoSmaConnector(BaseConnector):
             "get_message_tracking_details": self._handle_get_message_tracking_details,
             "search_quarantine_messages": self._handle_search_quarantine_messages,
             "search_tracking_messages": self._handle_search_tracking_messages,
+            "release_email": self._handle_release_email,
         }
 
         action = self.get_action_identifier()

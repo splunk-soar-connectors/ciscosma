@@ -24,6 +24,7 @@ CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT = "/sma/api/v2.0/quarantine/messages/detai
 CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT = "/sma/api/v2.0/message-tracking/details"
 CISCOSMA_SEARCH_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT = "/sma/api/v2.0/message-tracking/messages"
+CISCOSMA_RELEASE_MESSAGES_ENDPOINT = "/api/v2.0/quarantine/messages"
 
 # Future endpoints
 # GET /api/v2.0/reporting/report?resource_attribute
