@@ -23,14 +23,21 @@ from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
 
 from ciscosma_consts import (
+    CISCOSMA_DEFAULT_LIST_LIMIT,
+    CISCOSMA_DEFAULT_LIST_OFFSET,
+    CISCOSMA_DELETE_MESSAGES_ENDPOINT,
     CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT,
     CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
     CISCOSMA_GET_TOKEN_ENDPOINT,
     CISCOSMA_RELEASE_MESSAGES_ENDPOINT,
-    CISCOSMA_DELETE_MESSAGES_ENDPOINT,
+    CISCOSMA_SEARCH_BLOCKLIST_ENDPOINT,
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
+    CISCOSMA_SEARCH_SAFELIST_ENDPOINT,
     CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
     CISCOSMA_VALID_FILTER_OPERATORS,
+    CISCOSMA_VALID_LIST_ORDER_BY,
+    CISCOSMA_VALID_LIST_TYPES,
+    CISCOSMA_VALID_LIST_VIEW_BY,
     CISCOSMA_VALID_ORDER_BY,
     CISCOSMA_VALID_ORDER_DIRECTIONS,
 )
@@ -299,16 +306,10 @@ class CiscoSmaConnector(BaseConnector):
         except ValueError:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' must be a valid integer")
 
-        payload = {
-            "quarantineType": "spam",
-            "mids": [message_id]
-        }
+        payload = {"quarantineType": "spam", "mids": [message_id]}
 
         ret_val, response = self._make_authenticated_request(
-            action_result,
-            CISCOSMA_DELETE_MESSAGES_ENDPOINT,
-            json_data=payload,
-            method="delete"
+            action_result, CISCOSMA_DELETE_MESSAGES_ENDPOINT, json_data=payload, method="delete"
         )
 
         if phantom.is_fail(ret_val):
@@ -318,10 +319,7 @@ class CiscoSmaConnector(BaseConnector):
             delete_data = response.get("data", {})
             action_result.add_data(delete_data)
 
-            summary = {
-                "total_deleted": delete_data.get("totalCount", 0),
-                "action": delete_data.get("action")
-            }
+            summary = {"total_deleted": delete_data.get("totalCount", 0), "action": delete_data.get("action")}
             action_result.update_summary(summary)
 
         except Exception as e:
@@ -418,6 +416,64 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message tracking details")
 
+    def _handle_search_list(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        list_type = param.get("list_type", "safelist").lower()
+        if list_type not in CISCOSMA_VALID_LIST_TYPES:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'list_type'")
+
+        endpoint = CISCOSMA_SEARCH_SAFELIST_ENDPOINT if list_type == "safelist" else CISCOSMA_SEARCH_BLOCKLIST_ENDPOINT
+
+        params = {"action": "view", "quarantineType": "spam"}
+
+        view_by = param.get("view_by", "recipient")
+        if view_by not in CISCOSMA_VALID_LIST_VIEW_BY:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'view_by'")
+        params["viewBy"] = view_by
+
+        order_by = param.get("order_by", "recipient")
+        if order_by not in CISCOSMA_VALID_LIST_ORDER_BY:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'order_by'")
+        params["orderBy"] = order_by
+
+        order_dir = param.get("order_direction", "desc")
+        if order_dir not in ["asc", "desc"]:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'order_direction'")
+        params["orderDir"] = order_dir
+
+        # TODO: Check these constants may want to change
+        offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
+        limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
+        params["offset"] = offset
+        params["limit"] = limit
+
+        # Handle search (only when orderBy=recipient)
+        if search := param.get("search"):
+            if order_by != "recipient":
+                return action_result.set_status(phantom.APP_ERROR, "Search parameter is only supported when order_by is set to 'recipient'")
+            params["search"] = search
+
+        ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            entries = response.get("data", [])
+            total_count = response.get("meta", {}).get("totalCount", 0)
+
+            for entry in entries:
+                action_result.add_data(entry)
+
+            summary = {"total_entries": total_count, "entries_returned": len(entries), "list_type": list_type}
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, f"Successfully retrieved {list_type} entries")
+
     def initialize(self):
         config = self.get_config()
         self._base_url = config["host"].rstrip("/")
@@ -436,6 +492,8 @@ class CiscoSmaConnector(BaseConnector):
             "search_quarantine_messages": self._handle_search_quarantine_messages,
             "search_tracking_messages": self._handle_search_tracking_messages,
             "release_email": self._handle_release_email,
+            "delete_email": self._handle_delete_email,
+            "search_list": self._handle_search_list,
         }
 
         action = self.get_action_identifier()

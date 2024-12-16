@@ -783,6 +783,128 @@
                 }
             ],
             "versions": "EQ(*)"
+        },
+        {
+            "action": "search list",
+            "identifier": "search_list",
+            "description": "Search safelist or blocklist entries",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "list_type": {
+                    "description": "Type of list to search",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 0,
+                    "value_list": ["safelist", "blocklist"],
+                    "default": "safelist"
+                },
+                "view_by": {
+                    "description": "View entries by sender or recipient",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 1,
+                    "value_list": ["sender", "recipient"],
+                    "default": "recipient"
+                },
+                "order_by": {
+                    "description": "Field to sort results by",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 2,
+                    "value_list": ["sender", "recipient"],
+                    "default": "recipient"
+                },
+                "order_direction": {
+                    "description": "Sort direction",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 3,
+                    "value_list": ["asc", "desc"],
+                    "default": "desc"
+                },
+                "offset": {
+                    "description": "Number of records to skip/offset",
+                    "data_type": "numeric",
+                    "required": false,
+                    "order": 4,
+                    "default": 0
+                },
+                "limit": {
+                    "description": "Max number of records to return",
+                    "data_type": "numeric",
+                    "required": false,
+                    "order": 5,
+                    "default": 25
+                },
+                "search": {
+                    "description": "Search term (only supported when order_by=recipient)",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 6
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.list_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.view_by",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.order_by",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.order_direction",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.offset",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.search",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.senderList",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.recipientAddress",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.summary.total_entries",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.entries_returned",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.list_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "versions": "EQ(*)"
         }
     ]
 }

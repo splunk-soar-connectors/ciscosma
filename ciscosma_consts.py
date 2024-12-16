@@ -18,14 +18,21 @@
 CISCOSMA_VALID_ORDER_BY = ["from_address", "to_address", "subject"]
 CISCOSMA_VALID_ORDER_DIRECTIONS = ["asc", "desc"]
 CISCOSMA_VALID_FILTER_OPERATORS = ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
+CISCOSMA_VALID_LIST_TYPES = ["safelist", "blocklist"]
+CISCOSMA_VALID_LIST_VIEW_BY = ["sender", "recipient"]
+CISCOSMA_VALID_LIST_ORDER_BY = ["sender", "recipient"]
+CISCOSMA_DEFAULT_LIST_LIMIT = 25
+CISCOSMA_DEFAULT_LIST_OFFSET = 0
 
 CISCOSMA_GET_TOKEN_ENDPOINT = "/sma/api/v2.0/login"
 CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT = "/sma/api/v2.0/quarantine/messages/details"
 CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT = "/sma/api/v2.0/message-tracking/details"
 CISCOSMA_SEARCH_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT = "/sma/api/v2.0/message-tracking/messages"
-CISCOSMA_RELEASE_MESSAGES_ENDPOINT = "sma/api/v2.0/quarantine/messages"
+CISCOSMA_RELEASE_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_DELETE_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
+CISCOSMA_SEARCH_SAFELIST_ENDPOINT = "/sma/api/v2.0/quarantine/safelist"
+CISCOSMA_SEARCH_BLOCKLIST_ENDPOINT = "/sma/api/v2.0/quarantine/blocklist"
 
 # Future endpoints
 # GET /api/v2.0/reporting/report?resource_attribute
