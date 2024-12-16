@@ -27,6 +27,7 @@ from ciscosma_consts import (
     CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
     CISCOSMA_GET_TOKEN_ENDPOINT,
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
+    CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
     CISCOSMA_VALID_FILTER_OPERATORS,
     CISCOSMA_VALID_ORDER_BY,
     CISCOSMA_VALID_ORDER_DIRECTIONS,
@@ -251,6 +252,53 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message details")
 
+    def _handle_search_tracking_messages(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        start_date = param.get("start_date")
+        end_date = param.get("end_date")
+        if not start_date or not end_date:
+            return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
+
+        params = {"startDate": start_date, "endDate": end_date, "searchOption": "messages"}
+
+        # TODO: Confirm these params (documentation is unclear)
+        optional_params = {
+            "cisco_host": "ciscoHost",
+            "offset": "offset",
+            "limit": "limit",
+            "sender": "sender",
+            "recipient": "recipient",
+            "subject": "subject",
+            "message_id": "mid",
+            "status": "status",
+        }
+
+        for param_name, api_param in optional_params.items():
+            if value := param.get(param_name):
+                params[api_param] = value
+
+        ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            messages = response.get("data", [])
+            total_count = response.get("meta", {}).get("totalCount", 0)
+            bad_records = response.get("meta", {}).get("num_bad_records", 0)
+
+            for message in messages:
+                action_result.add_data(message)
+
+            summary = {"total_messages": total_count, "messages_returned": len(messages), "bad_records": bad_records}
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved tracking messages")
+
     def _handle_get_message_tracking_details(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -309,6 +357,7 @@ class CiscoSmaConnector(BaseConnector):
             "get_message_details": self._handle_get_message_details,
             "get_message_tracking_details": self._handle_get_message_tracking_details,
             "search_quarantine_messages": self._handle_search_quarantine_messages,
+            "search_tracking_messages": self._handle_search_tracking_messages,
         }
 
         action = self.get_action_identifier()
