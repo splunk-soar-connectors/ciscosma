@@ -474,6 +474,90 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, f"Successfully retrieved {list_type} entries")
 
+    def _handle_add_list_entry(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        list_type = param.get("list_type", "safelist").lower()
+        if list_type not in CISCOSMA_VALID_LIST_TYPES:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'list_type'")
+
+        view_by = param.get("view_by", "recipient")
+        if view_by not in CISCOSMA_VALID_LIST_VIEW_BY:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'view_by'")
+
+        payload = {
+            "action": "add",
+            "quarantineType": "spam",
+            "viewBy": view_by
+        }
+
+        if view_by == "recipient":
+            recipient_addresses = param.get("recipient_addresses")
+            if not recipient_addresses:
+                return action_result.set_status(phantom.APP_ERROR, "Parameter 'recipient_addresses' is required when view_by is 'recipient'")
+
+            sender_list = param.get("sender_list")
+            if not sender_list:
+                return action_result.set_status(phantom.APP_ERROR, "Parameter 'sender_list' is required when view_by is 'recipient'")
+
+            # Convert to list
+            if isinstance(recipient_addresses, str):
+                recipient_addresses = [addr.strip() for addr in recipient_addresses.split(",")]
+            if isinstance(sender_list, str):
+                sender_list = [sender.strip() for sender in sender_list.split(",")]
+
+            payload["recipientAddresses"] = recipient_addresses
+            payload["senderList"] = sender_list
+
+        else:
+            # sender
+            sender_addresses = param.get("sender_addresses")
+            if not sender_addresses:
+                return action_result.set_status(phantom.APP_ERROR, "Parameter 'sender_addresses' is required when view_by is 'sender'")
+
+            recipient_list = param.get("recipient_list")
+            if not recipient_list:
+                return action_result.set_status(phantom.APP_ERROR, "Parameter 'recipient_list' is required when view_by is 'sender'")
+
+            # Convert to list
+            if isinstance(sender_addresses, str):
+                sender_addresses = [addr.strip() for addr in sender_addresses.split(",")]
+            if isinstance(recipient_list, str):
+                recipient_list = [recip.strip() for recip in recipient_list.split(",")]
+
+            payload["senderAddresses"] = sender_addresses
+            payload["recipientList"] = recipient_list
+
+        endpoint = CISCOSMA_ADD_SAFELIST_ENDPOINT if list_type == "safelist" else CISCOSMA_ADD_BLOCKLIST_ENDPOINT
+
+        ret_val, response = self._make_authenticated_request(
+            action_result,
+            endpoint,
+            json_data=payload,
+            method="post"
+        )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            action_result.add_data(response.get("data", {}))
+
+            summary = {
+                "list_type": list_type,
+                "view_by": view_by,
+                "status": "success"
+            }
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(
+            phantom.APP_SUCCESS,
+            f"Successfully added entry to {list_type}"
+        )
+
     def initialize(self):
         config = self.get_config()
         self._base_url = config["host"].rstrip("/")
@@ -494,6 +578,7 @@ class CiscoSmaConnector(BaseConnector):
             "release_email": self._handle_release_email,
             "delete_email": self._handle_delete_email,
             "search_list": self._handle_search_list,
+            "add_list_entry": self._handle_add_list_entry,
         }
 
         action = self.get_action_identifier()
