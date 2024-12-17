@@ -33,6 +33,7 @@ CISCOSMA_RELEASE_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_DELETE_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_SAFELIST_ENDPOINT = "/sma/api/v2.0/quarantine/safelist"
 CISCOSMA_BLOCKLIST_ENDPOINT = "/sma/api/v2.0/quarantine/blocklist"
+CISCOSMA_REPORTING_ENDPOINT = "sma/api/v2.0/reporting/{}"
 
 # Future endpoints
 # GET /api/v2.0/reporting/report?resource_attribute

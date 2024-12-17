@@ -31,6 +31,7 @@ from ciscosma_consts import (
     CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
     CISCOSMA_GET_TOKEN_ENDPOINT,
     CISCOSMA_RELEASE_MESSAGES_ENDPOINT,
+    CISCOSMA_REPORTING_ENDPOINT,
     CISCOSMA_SAFELIST_ENDPOINT,
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
@@ -653,6 +654,59 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, f"Successfully deleted entries from {summary['list_type']}")
 
+    def _handle_get_statistics_report(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        start_date = param.get("start_date")
+        end_date = param.get("end_date")
+        if not start_date or not end_date:
+            return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
+
+        params = {"startDate": start_date, "endDate": end_date, "device_type": "esa"}
+
+        optional_params = {
+            "query_type": param.get("query_type"),
+            "orderBy": param.get("order_by"),
+            "orderDir": param.get("order_direction"),
+            "offset": param.get("offset"),
+            "limit": param.get("limit"),
+            "top": param.get("top"),
+            "filterValue": param.get("filter_value"),
+            "filterBy": param.get("filter_by"),
+            "filterOperator": param.get("filter_operator"),
+            "device_group_name": param.get("device_group_name"),
+            "device_name": param.get("device_name"),
+        }
+
+        params.update({k: v for k, v in optional_params.items() if v is not None})
+
+        if order_dir := params.get("orderDir"):
+            if order_dir not in ["asc", "desc"]:
+                return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'order_direction'. Must be 'asc' or 'desc'")
+
+        if filter_op := params.get("filterOperator"):
+            if filter_op not in ["begins_with", "is"]:
+                return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'filter_operator'. Must be 'begins_with' or 'is'")
+
+        report_type = param["report_type"]
+        endpoint = CISCOSMA_REPORTING_ENDPOINT.format(report_type)
+
+        ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            action_result.add_data(response.get("data", {}))
+
+            summary = {"report_type": report_type, "total_count": response.get("meta", {}).get("totalCount", 0)}
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved statistics report")
+
     def initialize(self):
         config = self.get_config()
         self._base_url = config["host"].rstrip("/")
@@ -676,6 +730,7 @@ class CiscoSmaConnector(BaseConnector):
             "add_list_entry": self._handle_add_list_entry,
             "edit_list_entry": self._handle_edit_list_entry,
             "delete_list_entry": self._handle_delete_list_entry,
+            "get_statistics_report": self._handle_get_statistics_report,
         }
 
         action = self.get_action_identifier()
