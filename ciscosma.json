@@ -1137,6 +1137,102 @@
                 }
             ],
             "versions": "EQ(*)"
+        },
+        {
+            "action": "delete list entry",
+            "identifier": "delete_list_entry",
+            "description": "Delete an entry from the spam quarantine safelist or blocklist",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "list_type": {
+                    "description": "Type of list to delete entry from",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 0,
+                    "value_list": ["safelist", "blocklist"],
+                    "default": "safelist"
+                },
+                "view_by": {
+                    "description": "Delete entry by sender or recipient",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 1,
+                    "value_list": ["sender", "recipient"],
+                    "default": "recipient"
+                },
+                "recipient_list": {
+                    "description": "Recipient email addresses (comma-separated if multiple) - Required with view_by=recipient",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 2
+                },
+                "sender_list": {
+                    "description": "Sender addresses or domains (comma-separated if multiple) - Required with view_by=sender",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 3
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.list_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.view_by",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.recipient_list",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.sender_list",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.totalCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.recipientList",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.senderList",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.list_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.view_by",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_deleted",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "versions": "EQ(*)"
         }
     ]
 }

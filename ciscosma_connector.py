@@ -167,7 +167,7 @@ class CiscoSmaConnector(BaseConnector):
 
         Args:
             param (dict): Parameters for action
-            action (str): Action type ('add', 'edit')
+            action (str): Action type ('add', 'edit', 'delete')
 
         Returns:
             tuple: (action_result, payload, endpoint)
@@ -184,47 +184,73 @@ class CiscoSmaConnector(BaseConnector):
             action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'view_by'")
             return action_result, None, None
 
-        payload = {"action": action, "quarantineType": "spam", "viewBy": view_by}
+        payload = {"quarantineType": "spam", "viewBy": view_by}
+
+        # Add action only for add/edit operations
+        if action != "delete":
+            payload["action"] = action
 
         if view_by == "recipient":
-            recipient_addresses = param.get("recipient_addresses")
-            if not recipient_addresses:
-                action_result.set_status(phantom.APP_ERROR, "Parameter 'recipient_addresses' is required when view_by is 'recipient'")
-                return action_result, None, None
+            if action == "delete":
+                recipient_list = param.get("recipient_list")
+                if not recipient_list:
+                    action_result.set_status(phantom.APP_ERROR, "Parameter 'recipient_list' is required when view_by is 'recipient'")
+                    return action_result, None, None
 
-            sender_list = param.get("sender_list")
-            if not sender_list:
-                action_result.set_status(phantom.APP_ERROR, "Parameter 'sender_list' is required when view_by is 'recipient'")
-                return action_result, None, None
+                # Convert to list
+                if isinstance(recipient_list, str):
+                    recipient_list = [addr.strip() for addr in recipient_list.split(",")]
+                payload["recipientList"] = recipient_list
+            else:
+                recipient_addresses = param.get("recipient_addresses")
+                if not recipient_addresses:
+                    action_result.set_status(phantom.APP_ERROR, "Parameter 'recipient_addresses' is required when view_by is 'recipient'")
+                    return action_result, None, None
 
-            # Convert to list
-            if isinstance(recipient_addresses, str):
-                recipient_addresses = [addr.strip() for addr in recipient_addresses.split(",")]
-            if isinstance(sender_list, str):
-                sender_list = [sender.strip() for sender in sender_list.split(",")]
+                sender_list = param.get("sender_list")
+                if not sender_list:
+                    action_result.set_status(phantom.APP_ERROR, "Parameter 'sender_list' is required when view_by is 'recipient'")
+                    return action_result, None, None
 
-            payload["recipientAddresses"] = recipient_addresses
-            payload["senderList"] = sender_list
+                # Convert to list
+                if isinstance(recipient_addresses, str):
+                    recipient_addresses = [addr.strip() for addr in recipient_addresses.split(",")]
+                if isinstance(sender_list, str):
+                    sender_list = [sender.strip() for sender in sender_list.split(",")]
+
+                payload["recipientAddresses"] = recipient_addresses
+                payload["senderList"] = sender_list
 
         else:  # sender
-            sender_addresses = param.get("sender_addresses")
-            if not sender_addresses:
-                action_result.set_status(phantom.APP_ERROR, "Parameter 'sender_addresses' is required when view_by is 'sender'")
-                return action_result, None, None
+            if action == "delete":
+                sender_list = param.get("sender_list")
+                if not sender_list:
+                    action_result.set_status(phantom.APP_ERROR, "Parameter 'sender_list' is required when view_by is 'sender'")
+                    return action_result, None, None
 
-            recipient_list = param.get("recipient_list")
-            if not recipient_list:
-                action_result.set_status(phantom.APP_ERROR, "Parameter 'recipient_list' is required when view_by is 'sender'")
-                return action_result, None, None
+                # Convert to list
+                if isinstance(sender_list, str):
+                    sender_list = [sender.strip() for sender in sender_list.split(",")]
+                payload["senderList"] = sender_list
+            else:
+                sender_addresses = param.get("sender_addresses")
+                if not sender_addresses:
+                    action_result.set_status(phantom.APP_ERROR, "Parameter 'sender_addresses' is required when view_by is 'sender'")
+                    return action_result, None, None
 
-            # Convert to list
-            if isinstance(sender_addresses, str):
-                sender_addresses = [addr.strip() for addr in sender_addresses.split(",")]
-            if isinstance(recipient_list, str):
-                recipient_list = [recip.strip() for recip in recipient_list.split(",")]
+                recipient_list = param.get("recipient_list")
+                if not recipient_list:
+                    action_result.set_status(phantom.APP_ERROR, "Parameter 'recipient_list' is required when view_by is 'sender'")
+                    return action_result, None, None
 
-            payload["senderAddresses"] = sender_addresses
-            payload["recipientList"] = recipient_list
+                # Convert to list
+                if isinstance(sender_addresses, str):
+                    sender_addresses = [addr.strip() for addr in sender_addresses.split(",")]
+                if isinstance(recipient_list, str):
+                    recipient_list = [recip.strip() for recip in recipient_list.split(",")]
+
+                payload["senderAddresses"] = sender_addresses
+                payload["recipientList"] = recipient_list
 
         endpoint = CISCOSMA_SAFELIST_ENDPOINT if list_type == "safelist" else CISCOSMA_BLOCKLIST_ENDPOINT
 
@@ -600,6 +626,33 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, f"Successfully edited entry in {summary['list_type']}")
 
+    def _handle_delete_list_entry(self, param):
+        action_result, payload, endpoint = self._list_entry_operation_setup(param, "delete")
+        if payload is None:
+            return action_result.get_status()
+
+        ret_val, response = self._make_authenticated_request(action_result, endpoint, json_data=payload, method="delete")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            delete_data = response.get("data", {})
+            action_result.add_data(delete_data)
+
+            summary = {
+                "list_type": "safelist" if CISCOSMA_SAFELIST_ENDPOINT in endpoint else "blocklist",
+                "view_by": payload["viewBy"],
+                "total_deleted": delete_data.get("totalCount", 0),
+                "status": "success",
+            }
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, f"Successfully deleted entries from {summary['list_type']}")
+
     def initialize(self):
         config = self.get_config()
         self._base_url = config["host"].rstrip("/")
@@ -622,6 +675,7 @@ class CiscoSmaConnector(BaseConnector):
             "search_list": self._handle_search_list,
             "add_list_entry": self._handle_add_list_entry,
             "edit_list_entry": self._handle_edit_list_entry,
+            "delete_list_entry": self._handle_delete_list_entry,
         }
 
         action = self.get_action_identifier()
