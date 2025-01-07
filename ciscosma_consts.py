@@ -18,6 +18,12 @@
 CISCOSMA_VALID_ORDER_BY = ["from_address", "to_address", "subject"]
 CISCOSMA_VALID_ORDER_DIRECTIONS = ["asc", "desc"]
 CISCOSMA_VALID_FILTER_OPERATORS = ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
+CISCOSMA_VALID_SUBJECT_FILTERS = [
+    "contains", "starts_with", "ends_with", "matches_exactly",
+    "does_not_contain", "does_not_start_with", "does_not_end_with", "does_not_match"
+]
+CISCOSMA_VALID_SIZE_FILTERS = ["range", "less_than", "more_than"]
+CISCOSMA_VALID_QUARANTINE_ORDER_BY = ["sender", "subject", "received", "scheduledExit", "size"]
 CISCOSMA_VALID_LIST_TYPES = ["safelist", "blocklist"]
 CISCOSMA_VALID_LIST_VIEW_BY = ["sender", "recipient"]
 CISCOSMA_VALID_LIST_ORDER_BY = ["sender", "recipient"]
@@ -34,20 +40,4 @@ CISCOSMA_DELETE_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_SAFELIST_ENDPOINT = "/sma/api/v2.0/quarantine/safelist"
 CISCOSMA_BLOCKLIST_ENDPOINT = "/sma/api/v2.0/quarantine/blocklist"
 CISCOSMA_REPORTING_ENDPOINT = "sma/api/v2.0/reporting/{}"
-
-# Future endpoints
-# GET /api/v2.0/reporting/report?resource_attribute
-# GET /api/v2.0/reporting/report/counter?resource_attribute
-
-# GET/sma/api/v2.0/message-tracking/messages?resource_attribute
-
-# GET /api/v2.0/quarantine/messages?resource_attribute
-# GET /api/v2.0/quarantine/messages?resource_attribute(search)
-# GET /api/v2.0/quarantine/messages?resource_attribute(download attachment -> possible)
-# POST /api/v2.0/quarantine/messages?resource_attribute (release)
-
-# POST /api/v2.0/quarantine/safelist?resource_attribute
-# POST /api/v2.0/quarantine/blocklist?resource_attribute
-
-# DELETE /api/v2.0/quarantine/safelist?resource_attribute
-# DELETE /api/v2.0/quarantine/blocklist?resource_attribute
+CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT = "/sma/api/v2.0/quarantine/messages/attachment"

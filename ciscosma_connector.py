@@ -16,7 +16,6 @@
 # Cisco SMA Connector
 
 import base64
-import datetime
 import os
 import re
 import tempfile
@@ -39,12 +38,16 @@ from ciscosma_consts import (
     CISCOSMA_SAFELIST_ENDPOINT,
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
+    CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT,
     CISCOSMA_VALID_FILTER_OPERATORS,
     CISCOSMA_VALID_LIST_ORDER_BY,
     CISCOSMA_VALID_LIST_TYPES,
     CISCOSMA_VALID_LIST_VIEW_BY,
     CISCOSMA_VALID_ORDER_BY,
     CISCOSMA_VALID_ORDER_DIRECTIONS,
+    CISCOSMA_VALID_SUBJECT_FILTERS,
+    CISCOSMA_VALID_SIZE_FILTERS,
+    CISCOSMA_VALID_QUARANTINE_ORDER_BY,
 )
 
 
@@ -409,6 +412,87 @@ class CiscoSmaConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved messages")
+
+    def _handle_search_general_quarantine_messages(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        start_date = param.get("start_date")
+        end_date = param.get("end_date")
+        if not start_date or not end_date:
+            return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
+
+        params = {
+            "startDate": start_date,
+            "endDate": end_date,
+            "quarantineType": "pvo" 
+        }
+
+        quarantines = param.get("quarantines")
+        if not quarantines:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'quarantines' is required")
+        params["quarantines"] = quarantines
+
+        optional_params = {
+            "subject_filter_by": "subjectFilterBy",
+            "subject_filter_value": "subjectFilterValue",
+            "originating_esa_ip": "originatingEsaIp",
+            "attachment_name": "attachmentName",
+            "attachment_size_filter_by": "attachmentSizeFilterBy",
+            "attachment_size_from": "attachmentSizeFromValue",
+            "attachment_size_to": "attachmentSizeToValue",
+            "order_by": "orderBy",
+            "order_direction": "orderDir",
+            "offset": "offset",
+            "limit": "limit",
+            "envelope_recipient_filter_by": "envelopeRecipientFilterBy",
+            "envelope_recipient_filter_value": "envelopeRecipientFilterValue",
+            "envelope_sender_filter_by": "envelopeSenderFilterBy",
+            "envelope_sender_filter_value": "envelopeSenderFilterValue"
+        }
+
+        for param_name, api_param in optional_params.items():
+            if value := param.get(param_name):
+                params[api_param] = value
+
+        if subject_filter := params.get("subjectFilterBy"):
+            if subject_filter not in CISCOSMA_VALID_SUBJECT_FILTERS:
+                return action_result.set_status(phantom.APP_ERROR, f"Invalid subject_filter_by. Must be one of: {CISCOSMA_VALID_SUBJECT_FILTERS}")
+
+        if size_filter := params.get("attachmentSizeFilterBy"):
+            if size_filter not in CISCOSMA_VALID_SIZE_FILTERS:
+                return action_result.set_status(phantom.APP_ERROR, f"Invalid attachment_size_filter_by. Must be one of: {CISCOSMA_VALID_SIZE_FILTERS}")
+
+        if order_by := params.get("orderBy"):
+            if order_by not in CISCOSMA_VALID_QUARANTINE_ORDER_BY:
+                return action_result.set_status(phantom.APP_ERROR, f"Invalid order_by. Must be one of: {CISCOSMA_VALID_QUARANTINE_ORDER_BY}")
+
+        if order_dir := params.get("orderDir"):
+            if order_dir not in CISCOSMA_VALID_ORDER_DIRECTIONS:
+                return action_result.set_status(phantom.APP_ERROR, f"Invalid order_direction. Must be one of: {CISCOSMA_VALID_ORDER_DIRECTIONS}")
+
+        ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_SEARCH_MESSAGES_ENDPOINT, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            messages = response.get("data", [])
+            total_count = response.get("meta", {}).get("totalCount", 0)
+
+            for message in messages:
+                action_result.add_data(message)
+
+            summary = {
+                "total_messages": total_count,
+                "messages_returned": len(messages),
+                "quarantines": quarantines
+            }
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved quarantine messages")
 
     def _handle_get_message_details(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -797,8 +881,7 @@ class CiscoSmaConnector(BaseConnector):
         headers = {"Accept": "*/*", "Content-Type": "application/json"}
 
         try:
-            endpoint = "/quarantine/messages/attachment"
-            ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params, headers=headers, stream=True)
+            ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT, params=params, headers=headers, stream=True)
 
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
@@ -850,6 +933,7 @@ class CiscoSmaConnector(BaseConnector):
             "get_message_details": self._handle_get_message_details,
             "get_message_tracking_details": self._handle_get_message_tracking_details,
             "search_quarantine_messages": self._handle_search_quarantine_messages,
+            "search_general_quarantine_messages": self._handle_search_general_quarantine_messages,
             "search_tracking_messages": self._handle_search_tracking_messages,
             "download_attachment": self._handle_download_attachment,
             "release_email": self._handle_release_email,
@@ -874,7 +958,6 @@ class CiscoSmaConnector(BaseConnector):
 
 if __name__ == "__main__":
     import sys
-
     import pudb
 
     pudb.set_trace()

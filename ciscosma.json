@@ -224,6 +224,215 @@
             "versions": "EQ(*)"
         },
         {
+            "action": "search general quarantine messages",
+            "identifier": "search_general_quarantine_messages",
+            "description": "Search for messages in Policy, Virus, Outbreak, and other quarantines",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "start_date": {
+                    "description": "Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 0
+                },
+                "end_date": {
+                    "description": "End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 1
+                },
+                "quarantines": {
+                    "description": "Comma-separated list of quarantines to search",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 2,
+                    "value_list": ["Outbreak", "Virus", "File Analysis", "Unclassified", "Policy"]
+                },
+                "subject_filter_by": {
+                    "description": "How to filter the subject",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 3,
+                    "value_list": [
+                        "contains", "starts_with", "ends_with", "matches_exactly",
+                        "does_not_contain", "does_not_start_with", "does_not_end_with", "does_not_match"
+                    ]
+                },
+                "subject_filter_value": {
+                    "description": "Value to filter subject by",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 4
+                },
+                "originating_esa_ip": {
+                    "description": "IP address of the ESA that processed the message",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 5,
+                    "contains": ["ip"]
+                },
+                "attachment_name": {
+                    "description": "Filter by attachment name",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 6
+                },
+                "attachment_size_filter_by": {
+                    "description": "How to filter attachment size",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 7,
+                    "value_list": ["range", "less_than", "more_than"]
+                },
+                "attachment_size_from": {
+                    "description": "Starting size in KB (for range/more_than)",
+                    "data_type": "numeric",
+                    "required": false,
+                    "order": 8
+                },
+                "attachment_size_to": {
+                    "description": "Ending size in KB (for range/less_than)",
+                    "data_type": "numeric",
+                    "required": false,
+                    "order": 9
+                },
+                "order_by": {
+                    "description": "Field to sort results by",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 10,
+                    "value_list": ["sender", "subject", "received", "scheduledExit", "size"]
+                },
+                "order_direction": {
+                    "description": "Sort direction",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 11,
+                    "value_list": ["asc", "desc"]
+                },
+                "offset": {
+                    "description": "Number of records to skip",
+                    "data_type": "numeric",
+                    "required": false,
+                    "order": 12
+                },
+                "limit": {
+                    "description": "Maximum number of records to return",
+                    "data_type": "numeric",
+                    "required": false,
+                    "order": 13
+                },
+                "envelope_recipient_filter_by": {
+                    "description": "How to filter envelope recipient",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 14,
+                    "value_list": [
+                        "contains", "starts_with", "ends_with", "matches_exactly",
+                        "does_not_contain", "does_not_start_with", "does_not_end_with", "does_not_match"
+                    ]
+                },
+                "envelope_recipient_filter_value": {
+                    "description": "Value to filter envelope recipient by",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 15
+                },
+                "envelope_sender_filter_by": {
+                    "description": "How to filter envelope sender",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 16,
+                    "value_list": [
+                        "contains", "starts_with", "ends_with", "matches_exactly",
+                        "does_not_contain", "does_not_start_with", "does_not_end_with", "does_not_match"
+                    ]
+                },
+                "envelope_sender_filter_value": {
+                    "description": "Value to filter envelope sender by",
+                    "data_type": "string",
+                    "required": false,
+                    "order": 17
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.mid",
+                    "data_type": "numeric",
+                    "contains": ["cisco sma message id"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.received",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.sender",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.esaHostName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.inQuarantines",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.scheduledExit",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.originatingEsaIp",
+                    "data_type": "string",
+                    "contains": ["ip"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.quarantineForReason",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.esaMid",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.recipient",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.size",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.total_messages",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.messages_returned",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.quarantines",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
             "action": "get message details",
             "identifier": "get_message_details",
             "description": "Retrieve details of a quarantined message",
