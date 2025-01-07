@@ -16,6 +16,10 @@
 # Cisco SMA Connector
 
 import base64
+import datetime
+import os
+import re
+import tempfile
 
 import phantom.app as phantom
 import requests
@@ -162,6 +166,74 @@ class CiscoSmaConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "JWT token not found in response"), None
 
         return phantom.APP_SUCCESS, jwt_token
+
+    def _sanitize_file_name(self, file_name):
+        """Helper to sanitize file name.
+
+        Args:
+            file_name (str): The file name to sanitize
+
+        Returns:
+            str: Sanitized file name
+        """
+        return re.sub("[,\"']", "", file_name)
+
+    def _download_to_vault(self, action_result, response, default_filename=None):
+        """Helper function to download content and add to vault.
+
+        Args:
+            action_result (ActionResult): The action result object
+            response (Response): Response object from requests
+            default_filename (str): Fallback filename if none found in headers
+
+        Returns:
+            tuple: (success (bool), vault_id (str), filename (str), error_message (str))
+        """
+        try:
+            content_disposition = response.headers.get("Content-Disposition", "")
+            filename = None
+
+            if "filename=" in content_disposition:
+                filename = content_disposition.split("filename=")[-1].strip('"')
+            elif "filename*=" in content_disposition:
+                filename = content_disposition.split("filename*=")[-1].split("''")[-1]
+
+            filename = filename or default_filename or "unknown_file"
+
+            filename = self._sanitize_file_name(filename)
+
+            # Temp file
+            temp_dir = phantom.vault.get_vault_temp_dir()
+            fd, temp_path = tempfile.mkstemp(dir=temp_dir)
+            os.close(fd)
+
+            # Download content in chunks
+            with open(temp_path, "wb") as temp_file:
+                for chunk in response.iter_content(chunk_size=128 * 1024):  # 128KB chunks
+                    if chunk:
+                        temp_file.write(chunk)
+
+            # Add to vault
+            vault_ret = phantom.vault.vault_add(container=self.get_container_id(), file_location=temp_path, file_name=filename)
+
+            # Clean up
+            try:
+                os.unlink(temp_path)
+            except:
+                pass
+
+            if not vault_ret.get("succeeded"):
+                return False, None, None, f"Error adding file to vault: {vault_ret.get('message', 'Unknown error')}"
+
+            vault_id = vault_ret.get("vault_id")
+            if not vault_id:
+                return False, None, None, "No vault ID returned from vault_add"
+
+            return True, vault_id, filename, None
+
+        except Exception as e:
+            error_msg = f"Error downloading to vault: {str(e)}"
+            return False, None, None, error_msg
 
     def _list_entry_operation_setup(self, param, action):
         """Helper for safelist and blocklist entry operations.
@@ -707,6 +779,61 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved statistics report")
 
+    def _handle_download_attachment(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        required_params = {"message_id": "Message ID", "attachment_id": "Attachment ID", "quarantine_type": "Quarantine Type"}
+
+        for param_name, display_name in required_params.items():
+            if not param.get(param_name):
+                return action_result.set_status(phantom.APP_ERROR, f"'{display_name}' is a required parameter")
+
+        params = {
+            "mid": param["message_id"], 
+            "attachmentId": param["attachment_id"], 
+            "quarantineType": param["quarantine_type"]
+        }
+
+        headers = {"Accept": "*/*", "Content-Type": "application/json"}
+
+        try:
+            endpoint = "/quarantine/messages/attachment"
+            ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params, headers=headers, stream=True)
+
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+            # JSON error response handling
+            content_type = response.headers.get("Content-Type", "")
+            if "application/json" in content_type.lower():
+                try:
+                    error_json = response.json()
+                    error_msg = error_json.get("error", {}).get("message", "Unknown error occurred")
+                    return action_result.set_status(phantom.APP_ERROR, f"API Error: {error_msg}")
+                except Exception:
+                    pass
+
+            # Download and add to vault
+            default_filename = f"attachment_{param['message_id']}_{param['attachment_id']}"
+            success, vault_id, filename, error_message = self._download_to_vault(action_result, response, default_filename)
+
+            if not success:
+                return action_result.set_status(phantom.APP_ERROR, error_message)
+
+            action_result.add_data(
+                {
+                    "filename": filename,
+                }
+            )
+
+            summary = {"vault_id": vault_id, "filename": filename, "size": response.headers.get("Content-Length", "Unknown")}
+            action_result.update_summary(summary)
+
+            return action_result.set_status(phantom.APP_SUCCESS, f"Successfully downloaded attachment '{filename}' to vault")
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error downloading attachment: {str(e)}")
+
     def initialize(self):
         config = self.get_config()
         self._base_url = config["host"].rstrip("/")
@@ -724,6 +851,7 @@ class CiscoSmaConnector(BaseConnector):
             "get_message_tracking_details": self._handle_get_message_tracking_details,
             "search_quarantine_messages": self._handle_search_quarantine_messages,
             "search_tracking_messages": self._handle_search_tracking_messages,
+            "download_attachment": self._handle_download_attachment,
             "release_email": self._handle_release_email,
             "delete_email": self._handle_delete_email,
             "search_list": self._handle_search_list,
