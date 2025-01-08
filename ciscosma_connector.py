@@ -658,6 +658,48 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully deleted message")
 
+    def _handle_delete_general_quarantine_email(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        message_id = param.get("message_id")
+        quarantine_name = param.get("quarantine_name")
+
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
+        if not quarantine_name:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'quarantine_name' is required")
+
+        # TODO: Replace with validator function
+        try:
+            message_id = int(message_id)
+        except ValueError:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' must be a valid integer")
+
+        payload = {"quarantineType": "pvo", "quarantineName": quarantine_name, "mids": [message_id]}
+
+        ret_val, response = self._make_authenticated_request(
+            action_result, CISCOSMA_DELETE_MESSAGES_ENDPOINT, json_data=payload, method="delete"
+        )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            delete_data = response.get("data", {})
+            action_result.add_data(delete_data)
+
+            summary = {
+                "total_deleted": delete_data.get("totalCount", 0),
+                "action": delete_data.get("action"),
+                "quarantine_name": quarantine_name,
+            }
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully deleted message from general quarantine")
+
     def _handle_search_tracking_messages(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -1010,6 +1052,7 @@ class CiscoSmaConnector(BaseConnector):
             "release_email": self._handle_release_email,
             "release_general_quarantine_email": self._handle_release_general_quarantine_email,
             "delete_email": self._handle_delete_email,
+            "delete_general_quarantine_email": self._handle_delete_general_quarantine_email,
             "search_list": self._handle_search_list,
             "add_list_entry": self._handle_add_list_entry,
             "edit_list_entry": self._handle_edit_list_entry,

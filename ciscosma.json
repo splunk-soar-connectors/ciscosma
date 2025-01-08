@@ -734,7 +734,7 @@
         {
             "action": "delete email",
             "identifier": "delete_email",
-            "description": "Delete a quarantined email message",
+            "description": "Delete a spam quarantined email message",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -769,6 +769,69 @@
                 },
                 {
                     "data_path": "action_result.summary.action",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "delete general quarantine email",
+            "identifier": "delete_general_quarantine_email",
+            "description": "Delete a message from Policy, Virus, Outbreak, or other quarantines",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "message_id": {
+                    "description": "Message ID (mid) to delete",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 0,
+                    "contains": ["cisco sma message id"]
+                },
+                "quarantine_name": {
+                    "description": "Name of quarantine to delete from",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 1,
+                    "value_list": ["Outbreak", "Virus", "File Analysis", "Unclassified", "Policy"]
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.message_id",
+                    "data_type": "string",
+                    "contains": ["cisco sma message id"]
+                },
+                {
+                    "data_path": "action_result.parameter.quarantine_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.action",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.totalCount",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.total_deleted",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.action",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.quarantine_name",
                     "data_type": "string"
                 },
                 {
