@@ -504,6 +504,124 @@
             "versions": "EQ(*)"
         },
         {
+            "action": "get_general_quarantine_message_details",
+            "description": "Retrieves details of a message from general quarantine (PVO)",
+            "type": "investigate",
+            "identifier": "get_general_quarantine_message_details",
+            "read_only": true,
+            "parameters": {
+                "message_id": {
+                    "description": "Message ID to retrieve details for",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": ["cisco sma message id"]
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.message_id",
+                    "data_type": "string",
+                    "contains": ["cisco sma message id"]
+                },
+                {
+                    "data_path": "action_result.data.*.mid",
+                    "data_type": "numeric",
+                    "contains": ["cisco sma message id"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.received",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.esaHostName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.quarantineName",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.reason",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.scheduledExit",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.originatingEsaIp",
+                    "data_type": "string",
+                    "contains": ["ip"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.matchedContents",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.messagePartDetails.*.attachmentId",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.messagePartDetails.*.attachmentSize",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.messagePartDetails.*.attachmentName",
+                    "data_type": "string",
+                    "contains": ["file_name"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.messageDetails.recipient",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.messageDetails.sender",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.messageDetails.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.messageBody",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.headers",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.subject",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.sender",
+                    "data_type": "string",
+                    "contains": ["email"]
+                },
+                {
+                    "data_path": "action_result.summary.quarantine_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.reason",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                }
+            ],
+            "versions": "EQ(*)"
+        },
+        {
             "action": "release email",
             "identifier": "release_email",
             "description": "Release a quarantined email message",

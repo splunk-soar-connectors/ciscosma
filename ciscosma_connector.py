@@ -516,6 +516,42 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message details")
 
+    def _handle_get_general_quarantine_message_details(self, param):
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        message_id = param.get("message_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
+
+        endpoint = CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT
+        params = {"mid": message_id, "quarantineType": "pvo"}
+
+        ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        try:
+            message_data = response.get("data", {})
+            action_result.add_data(message_data)
+
+            attributes = message_data.get("attributes", {})
+            message_details = attributes.get("messageDetails", {})
+            quarantine_details = attributes.get("quarantineDetails", [{}])[0]
+
+            summary = {
+                "subject": message_details.get("subject"),
+                "sender": message_details.get("sender"),
+                "quarantine_name": quarantine_details.get("quarantineName"),
+                "reason": quarantine_details.get("reason", []),
+            }
+            action_result.update_summary(summary)
+
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved general quarantine message details")
+
     def _handle_release_email(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -925,6 +961,7 @@ class CiscoSmaConnector(BaseConnector):
         action_mapping = {
             "test_connectivity": self._handle_test_connectivity,
             "get_message_details": self._handle_get_message_details,
+            "get_general_quarantine_message_details": self._handle_get_general_quarantine_message_details,
             "get_message_tracking_details": self._handle_get_message_tracking_details,
             "search_quarantine_messages": self._handle_search_quarantine_messages,
             "search_general_quarantine_messages": self._handle_search_general_quarantine_messages,
