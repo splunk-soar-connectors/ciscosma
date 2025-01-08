@@ -1612,7 +1612,7 @@
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
-            ],  
+            ],
             "versions": "EQ(*)"
         },
         {

@@ -19,8 +19,14 @@ CISCOSMA_VALID_ORDER_BY = ["from_address", "to_address", "subject"]
 CISCOSMA_VALID_ORDER_DIRECTIONS = ["asc", "desc"]
 CISCOSMA_VALID_FILTER_OPERATORS = ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
 CISCOSMA_VALID_SUBJECT_FILTERS = [
-    "contains", "starts_with", "ends_with", "matches_exactly",
-    "does_not_contain", "does_not_start_with", "does_not_end_with", "does_not_match"
+    "contains",
+    "starts_with",
+    "ends_with",
+    "matches_exactly",
+    "does_not_contain",
+    "does_not_start_with",
+    "does_not_end_with",
+    "does_not_match",
 ]
 CISCOSMA_VALID_SIZE_FILTERS = ["range", "less_than", "more_than"]
 CISCOSMA_VALID_QUARANTINE_ORDER_BY = ["sender", "subject", "received", "scheduledExit", "size"]

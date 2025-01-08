@@ -30,6 +30,7 @@ from ciscosma_consts import (
     CISCOSMA_DEFAULT_LIST_LIMIT,
     CISCOSMA_DEFAULT_LIST_OFFSET,
     CISCOSMA_DELETE_MESSAGES_ENDPOINT,
+    CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT,
     CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT,
     CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
     CISCOSMA_GET_TOKEN_ENDPOINT,
@@ -38,16 +39,15 @@ from ciscosma_consts import (
     CISCOSMA_SAFELIST_ENDPOINT,
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
-    CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT,
     CISCOSMA_VALID_FILTER_OPERATORS,
     CISCOSMA_VALID_LIST_ORDER_BY,
     CISCOSMA_VALID_LIST_TYPES,
     CISCOSMA_VALID_LIST_VIEW_BY,
     CISCOSMA_VALID_ORDER_BY,
     CISCOSMA_VALID_ORDER_DIRECTIONS,
-    CISCOSMA_VALID_SUBJECT_FILTERS,
-    CISCOSMA_VALID_SIZE_FILTERS,
     CISCOSMA_VALID_QUARANTINE_ORDER_BY,
+    CISCOSMA_VALID_SIZE_FILTERS,
+    CISCOSMA_VALID_SUBJECT_FILTERS,
 )
 
 
@@ -421,11 +421,7 @@ class CiscoSmaConnector(BaseConnector):
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
 
-        params = {
-            "startDate": start_date,
-            "endDate": end_date,
-            "quarantineType": "pvo" 
-        }
+        params = {"startDate": start_date, "endDate": end_date, "quarantineType": "pvo"}
 
         quarantines = param.get("quarantines")
         if not quarantines:
@@ -447,7 +443,7 @@ class CiscoSmaConnector(BaseConnector):
             "envelope_recipient_filter_by": "envelopeRecipientFilterBy",
             "envelope_recipient_filter_value": "envelopeRecipientFilterValue",
             "envelope_sender_filter_by": "envelopeSenderFilterBy",
-            "envelope_sender_filter_value": "envelopeSenderFilterValue"
+            "envelope_sender_filter_value": "envelopeSenderFilterValue",
         }
 
         for param_name, api_param in optional_params.items():
@@ -456,11 +452,15 @@ class CiscoSmaConnector(BaseConnector):
 
         if subject_filter := params.get("subjectFilterBy"):
             if subject_filter not in CISCOSMA_VALID_SUBJECT_FILTERS:
-                return action_result.set_status(phantom.APP_ERROR, f"Invalid subject_filter_by. Must be one of: {CISCOSMA_VALID_SUBJECT_FILTERS}")
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Invalid subject_filter_by. Must be one of: {CISCOSMA_VALID_SUBJECT_FILTERS}"
+                )
 
         if size_filter := params.get("attachmentSizeFilterBy"):
             if size_filter not in CISCOSMA_VALID_SIZE_FILTERS:
-                return action_result.set_status(phantom.APP_ERROR, f"Invalid attachment_size_filter_by. Must be one of: {CISCOSMA_VALID_SIZE_FILTERS}")
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Invalid attachment_size_filter_by. Must be one of: {CISCOSMA_VALID_SIZE_FILTERS}"
+                )
 
         if order_by := params.get("orderBy"):
             if order_by not in CISCOSMA_VALID_QUARANTINE_ORDER_BY:
@@ -482,11 +482,7 @@ class CiscoSmaConnector(BaseConnector):
             for message in messages:
                 action_result.add_data(message)
 
-            summary = {
-                "total_messages": total_count,
-                "messages_returned": len(messages),
-                "quarantines": quarantines
-            }
+            summary = {"total_messages": total_count, "messages_returned": len(messages), "quarantines": quarantines}
             action_result.update_summary(summary)
 
         except Exception as e:
@@ -872,16 +868,14 @@ class CiscoSmaConnector(BaseConnector):
             if not param.get(param_name):
                 return action_result.set_status(phantom.APP_ERROR, f"'{display_name}' is a required parameter")
 
-        params = {
-            "mid": param["message_id"], 
-            "attachmentId": param["attachment_id"], 
-            "quarantineType": param["quarantine_type"]
-        }
+        params = {"mid": param["message_id"], "attachmentId": param["attachment_id"], "quarantineType": param["quarantine_type"]}
 
         headers = {"Accept": "*/*", "Content-Type": "application/json"}
 
         try:
-            ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT, params=params, headers=headers, stream=True)
+            ret_val, response = self._make_authenticated_request(
+                action_result, CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT, params=params, headers=headers, stream=True
+            )
 
             if phantom.is_fail(ret_val):
                 return action_result.get_status()
@@ -958,6 +952,7 @@ class CiscoSmaConnector(BaseConnector):
 
 if __name__ == "__main__":
     import sys
+
     import pudb
 
     pudb.set_trace()
