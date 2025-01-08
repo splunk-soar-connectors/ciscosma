@@ -14,7 +14,7 @@
             "name": "Gary Ian Rokas"
         }
     ],
-    "license": "Copyright (c) 2024 Splunk Inc.",
+    "license": "Copyright (c) 2025 Splunk Inc.",
     "app_version": "1.0.0",
     "latest_tested_versions": [
         "On-prem, Version 15.5.1, API v2.0 (/sma/api/v2.0), December 2024"
