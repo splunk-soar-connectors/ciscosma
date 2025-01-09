@@ -18,6 +18,7 @@
 CISCOSMA_VALID_ORDER_BY = ["from_address", "to_address", "subject"]
 CISCOSMA_VALID_ORDER_DIRECTIONS = ["asc", "desc"]
 CISCOSMA_VALID_FILTER_OPERATORS = ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
+CISCOSMA_VALID_FILTER_OPERATORS_REPORT = ["begins_with", "is"]
 CISCOSMA_VALID_SUBJECT_FILTERS = [
     "contains",
     "starts_with",

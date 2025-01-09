@@ -40,6 +40,7 @@ from ciscosma_consts import (
     CISCOSMA_SEARCH_MESSAGES_ENDPOINT,
     CISCOSMA_SEARCH_TRACKING_MESSAGES_ENDPOINT,
     CISCOSMA_VALID_FILTER_OPERATORS,
+    CISCOSMA_VALID_FILTER_OPERATORS_REPORT,
     CISCOSMA_VALID_LIST_ORDER_BY,
     CISCOSMA_VALID_LIST_TYPES,
     CISCOSMA_VALID_LIST_VIEW_BY,
@@ -252,12 +253,12 @@ class CiscoSmaConnector(BaseConnector):
 
         list_type = param.get("list_type", "safelist").lower()
         if list_type not in CISCOSMA_VALID_LIST_TYPES:
-            action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'list_type'")
+            action_result.set_status(phantom.APP_ERROR, f"Invalid parameter 'list_type'. Must be one of: {CISCOSMA_VALID_LIST_TYPES}")
             return action_result, None, None
 
         view_by = param.get("view_by", "recipient")
         if view_by not in CISCOSMA_VALID_LIST_VIEW_BY:
-            action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'view_by'")
+            action_result.set_status(phantom.APP_ERROR, f"Invalid parameter 'view_by'. Must be one of: {CISCOSMA_VALID_LIST_VIEW_BY}")
             return action_result, None, None
 
         payload = {"quarantineType": "spam", "viewBy": view_by}
@@ -355,43 +356,43 @@ class CiscoSmaConnector(BaseConnector):
 
         params = {"startDate": start_date, "endDate": end_date, "quarantineType": "spam"}
 
-        order_by = param.get("order_by")
-        order_dir = param.get("order_direction")
-        offset = param.get("offset")
-        limit = param.get("limit")
-        envelope_recipient_operator = param.get("envelope_recipient_filter_operator")
-        envelope_recipient_value = param.get("envelope_recipient_filter_value")
-        filter_operator = param.get("filter_operator")
-        filter_value = param.get("filter_value")
+        optional_params = {
+            "order_by": "orderBy",
+            "order_direction": "orderDir",
+            "offset": "offset",
+            "limit": "limit",
+            "envelope_recipient_filter_operator": "envelopeRecipientFilterOperator",
+            "envelope_recipient_filter_value": "envelopeRecipientFilterValue",
+            "filter_operator": "filterOperator",
+            "filter_value": "filterValue",
+        }
 
-        if order_by and order_by not in CISCOSMA_VALID_ORDER_BY:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid 'order_by' parameter")
+        for param_name, api_param in optional_params.items():
+            if value := param.get(param_name):
+                params[api_param] = value
 
-        if order_dir and order_dir not in CISCOSMA_VALID_ORDER_DIRECTIONS:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid 'order_direction' parameter")
+        if order_by := params.get("orderBy"):
+            if order_by not in CISCOSMA_VALID_ORDER_BY:
+                return action_result.set_status(phantom.APP_ERROR, f"Invalid 'order_by' parameter. Must be one of: {CISCOSMA_VALID_ORDER_BY}")
 
-        if envelope_recipient_operator and envelope_recipient_operator not in CISCOSMA_VALID_FILTER_OPERATORS:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid 'envelope_recipient_filter_operator' parameter")
+        if order_dir := params.get("orderDir"):
+            if order_dir not in CISCOSMA_VALID_ORDER_DIRECTIONS:
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Invalid 'order_direction' parameter. Must be one of: {CISCOSMA_VALID_ORDER_DIRECTIONS}"
+                )
 
-        if filter_operator and filter_operator not in CISCOSMA_VALID_FILTER_OPERATORS:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid 'filter_operator' parameter")
+        if envelope_recipient_operator := params.get("envelopeRecipientFilterOperator"):
+            if envelope_recipient_operator not in CISCOSMA_VALID_FILTER_OPERATORS:
+                return action_result.set_status(
+                    phantom.APP_ERROR,
+                    f"Invalid 'envelope_recipient_filter_operator' parameter. Must be one of: {CISCOSMA_VALID_FILTER_OPERATORS}",
+                )
 
-        if offset:
-            params["offset"] = offset
-        if limit:
-            params["limit"] = limit
-        if order_by:
-            params["orderBy"] = order_by
-        if order_dir:
-            params["orderDir"] = order_dir
-        if envelope_recipient_operator:
-            params["envelopeRecipientFilterOperator"] = envelope_recipient_operator
-        if envelope_recipient_value:
-            params["envelopeRecipientFilterValue"] = envelope_recipient_value
-        if filter_operator:
-            params["filterOperator"] = filter_operator
-        if filter_value:
-            params["filterValue"] = filter_value
+        if filter_operator := params.get("filterOperator"):
+            if filter_operator not in CISCOSMA_VALID_FILTER_OPERATORS:
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Invalid 'filter_operator' parameter. Must be one of: {CISCOSMA_VALID_FILTER_OPERATORS}"
+                )
 
         ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_SEARCH_MESSAGES_ENDPOINT, params=params)
 
@@ -559,7 +560,6 @@ class CiscoSmaConnector(BaseConnector):
         if not message_id:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
 
-        # TODO: Replace with validator function
         try:
             message_id = int(message_id)
         except ValueError:
@@ -595,7 +595,6 @@ class CiscoSmaConnector(BaseConnector):
         if not quarantine_name:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'quarantine_name' is required")
 
-        # TODO: Replace with validator function
         try:
             message_id = int(message_id)
         except ValueError:
@@ -631,7 +630,6 @@ class CiscoSmaConnector(BaseConnector):
         if not message_id:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
 
-        # TODO: Replace with validator function
         try:
             message_id = int(message_id)
         except ValueError:
@@ -669,8 +667,8 @@ class CiscoSmaConnector(BaseConnector):
         if not quarantine_name:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'quarantine_name' is required")
 
-        # TODO: Replace with validator function
         try:
+            # This should be acceptable validation as the mid is just a number
             message_id = int(message_id)
         except ValueError:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' must be a valid integer")
@@ -750,24 +748,22 @@ class CiscoSmaConnector(BaseConnector):
     def _handle_get_message_tracking_details(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        mid = param.get("mid")
-        if not mid:
-            return action_result.set_status(phantom.APP_ERROR, "Parameter 'mid' is required")
+        message_id = param.get("message_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
 
-        icid = param.get("icid")
-        serial_number = param.get("serial_number")
-        start_date = param.get("start_date")
-        end_date = param.get("end_date")
+        try:
+            message_id = int(message_id)
+        except ValueError:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' must be a valid integer")
 
-        params = {"mid": mid}
-        if icid:
-            params["icid"] = icid
-        if serial_number:
-            params["serialNumber"] = serial_number
-        if start_date:
-            params["startDate"] = start_date
-        if end_date:
-            params["endDate"] = end_date
+        params = {"mid": message_id}
+
+        optional_params = {"icid": "icid", "serial_number": "serialNumber", "start_date": "startDate", "end_date": "endDate"}
+
+        for param_name, api_param in optional_params.items():
+            if value := param.get(param_name):
+                params[api_param] = value
 
         ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT, params=params)
 
@@ -794,7 +790,7 @@ class CiscoSmaConnector(BaseConnector):
 
         list_type = param.get("list_type", "safelist").lower()
         if list_type not in CISCOSMA_VALID_LIST_TYPES:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'list_type'")
+            return action_result.set_status(phantom.APP_ERROR, f"Invalid parameter 'list_type'. Must be one of: {CISCOSMA_VALID_LIST_TYPES}")
 
         endpoint = CISCOSMA_SAFELIST_ENDPOINT if list_type == "safelist" else CISCOSMA_BLOCKLIST_ENDPOINT
 
@@ -802,17 +798,19 @@ class CiscoSmaConnector(BaseConnector):
 
         view_by = param.get("view_by", "recipient")
         if view_by not in CISCOSMA_VALID_LIST_VIEW_BY:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'view_by'")
+            return action_result.set_status(phantom.APP_ERROR, f"Invalid parameter 'view_by'. Must be one of: {CISCOSMA_VALID_LIST_VIEW_BY}")
         params["viewBy"] = view_by
 
         order_by = param.get("order_by", "recipient")
         if order_by not in CISCOSMA_VALID_LIST_ORDER_BY:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'order_by'")
+            return action_result.set_status(phantom.APP_ERROR, f"Invalid parameter 'order_by'. Must be one of: {CISCOSMA_VALID_LIST_ORDER_BY}")
         params["orderBy"] = order_by
 
         order_dir = param.get("order_direction", "desc")
-        if order_dir not in ["asc", "desc"]:
-            return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'order_direction'")
+        if order_dir not in CISCOSMA_VALID_ORDER_DIRECTIONS:
+            return action_result.set_status(
+                phantom.APP_ERROR, f"Invalid parameter 'order_direction'. Must be one of: {CISCOSMA_VALID_ORDER_DIRECTIONS}"
+            )
         params["orderDir"] = order_dir
 
         # TODO: Check these constants may want to change
@@ -935,29 +933,35 @@ class CiscoSmaConnector(BaseConnector):
         params = {"startDate": start_date, "endDate": end_date, "device_type": "esa"}
 
         optional_params = {
-            "query_type": param.get("query_type"),
-            "orderBy": param.get("order_by"),
-            "orderDir": param.get("order_direction"),
-            "offset": param.get("offset"),
-            "limit": param.get("limit"),
-            "top": param.get("top"),
-            "filterValue": param.get("filter_value"),
-            "filterBy": param.get("filter_by"),
-            "filterOperator": param.get("filter_operator"),
-            "device_group_name": param.get("device_group_name"),
-            "device_type": param.get("device_type"),
-            "device_name": param.get("device_name"),
+            "query_type": "query_type",
+            "order_by": "orderBy",
+            "order_direction": "orderDir",
+            "offset": "offset",
+            "limit": "limit",
+            "top": "top",
+            "filter_value": "filterValue",
+            "filter_by": "filterBy",
+            "filter_operator": "filterOperator",
+            "device_group_name": "device_group_name",
+            "device_type": "device_type",
+            "device_name": "device_name",
         }
 
-        params.update({k: v for k, v in optional_params.items() if v is not None})
+        for param_name, api_param in optional_params.items():
+            if value := param.get(param_name):
+                params[api_param] = value
 
         if order_dir := params.get("orderDir"):
-            if order_dir not in ["asc", "desc"]:
-                return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'order_direction'. Must be 'asc' or 'desc'")
+            if order_dir not in CISCOSMA_VALID_ORDER_DIRECTIONS:
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Invalid parameter 'order_direction'. Must be one of: {CISCOSMA_VALID_ORDER_DIRECTIONS}"
+                )
 
         if filter_op := params.get("filterOperator"):
-            if filter_op not in ["begins_with", "is"]:
-                return action_result.set_status(phantom.APP_ERROR, "Invalid parameter 'filter_operator'. Must be 'begins_with' or 'is'")
+            if filter_op not in CISCOSMA_VALID_FILTER_OPERATORS_REPORT:
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Invalid parameter 'filter_operator'. Must be one of: {CISCOSMA_VALID_FILTER_OPERATORS_REPORT}"
+                )
 
         report_type = param["report_type"]
         endpoint = CISCOSMA_REPORTING_ENDPOINT.format(report_type)
