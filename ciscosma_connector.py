@@ -345,7 +345,7 @@ class CiscoSmaConnector(BaseConnector):
         self.save_progress("Test Connectivity Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_search_quarantine_messages(self, param):
+    def _handle_search_spam_quarantine_messages(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         start_date = param.get("start_date")
@@ -490,7 +490,7 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved quarantine messages")
 
-    def _handle_get_message_details(self, param):
+    def _handle_get_spam_quarantine_message_details(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -552,7 +552,7 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved general quarantine message details")
 
-    def _handle_release_email(self, param):
+    def _handle_release_spam_message(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -584,7 +584,7 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully released message")
 
-    def _handle_release_general_quarantine_email(self, param):
+    def _handle_release_general_quarantine_message(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -624,7 +624,7 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully released message from general quarantine")
 
-    def _handle_delete_email(self, param):
+    def _handle_delete_spam_message(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -658,7 +658,7 @@ class CiscoSmaConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully deleted message")
 
-    def _handle_delete_general_quarantine_email(self, param):
+    def _handle_delete_general_quarantine_message(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -945,6 +945,7 @@ class CiscoSmaConnector(BaseConnector):
             "filterBy": param.get("filter_by"),
             "filterOperator": param.get("filter_operator"),
             "device_group_name": param.get("device_group_name"),
+            "device_type": param.get("device_type"),
             "device_name": param.get("device_name"),
         }
 
@@ -1042,22 +1043,22 @@ class CiscoSmaConnector(BaseConnector):
 
         action_mapping = {
             "test_connectivity": self._handle_test_connectivity,
-            "get_message_details": self._handle_get_message_details,
-            "get_general_quarantine_message_details": self._handle_get_general_quarantine_message_details,
-            "get_message_tracking_details": self._handle_get_message_tracking_details,
-            "search_quarantine_messages": self._handle_search_quarantine_messages,
+            "search_spam_quarantine_messages": self._handle_search_spam_quarantine_messages,
             "search_general_quarantine_messages": self._handle_search_general_quarantine_messages,
             "search_tracking_messages": self._handle_search_tracking_messages,
-            "download_attachment": self._handle_download_attachment,
-            "release_email": self._handle_release_email,
-            "release_general_quarantine_email": self._handle_release_general_quarantine_email,
-            "delete_email": self._handle_delete_email,
-            "delete_general_quarantine_email": self._handle_delete_general_quarantine_email,
+            "get_spam_quarantine_message_details": self._handle_get_spam_quarantine_message_details,
+            "get_general_quarantine_message_details": self._handle_get_general_quarantine_message_details,
+            "get_message_tracking_details": self._handle_get_message_tracking_details,
+            "release_spam_message": self._handle_release_spam_message,
+            "release_general_quarantine_message": self._handle_release_general_quarantine_message,
+            "delete_spam_message": self._handle_delete_spam_message,
+            "delete_general_quarantine_message": self._handle_delete_general_quarantine_message,
             "search_list": self._handle_search_list,
             "add_list_entry": self._handle_add_list_entry,
             "edit_list_entry": self._handle_edit_list_entry,
             "delete_list_entry": self._handle_delete_list_entry,
             "get_statistics_report": self._handle_get_statistics_report,
+            "download_attachment": self._handle_download_attachment,
         }
 
         action = self.get_action_identifier()

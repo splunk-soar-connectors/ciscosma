@@ -9,11 +9,6 @@
     "product_name": "Cisco SMA",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "contributors": [
-        {
-            "name": "Gary Ian Rokas"
-        }
-    ],
     "license": "Copyright (c) 2025 Splunk Inc.",
     "app_version": "1.0.0",
     "latest_tested_versions": [
@@ -60,8 +55,8 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "search quarantine messages",
-            "identifier": "search_quarantine_messages",
+            "action": "search spam quarantine",
+            "identifier": "search_spam_quarantine_messages",
             "description": "Search for messages in the spam quarantine",
             "type": "investigate",
             "read_only": true,
@@ -224,7 +219,7 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "search general quarantine messages",
+            "action": "search quarantine",
             "identifier": "search_general_quarantine_messages",
             "description": "Search for messages in Policy, Virus, Outbreak, and other quarantines",
             "type": "investigate",
@@ -433,8 +428,8 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "get message details",
-            "identifier": "get_message_details",
+            "action": "get spam message",
+            "identifier": "get_spam_quarantine_message_details",
             "description": "Retrieve details of a spam quarantined message",
             "type": "investigate",
             "read_only": true,
@@ -443,6 +438,7 @@
                     "description": "Message ID (mid) to retrieve details for",
                     "data_type": "string",
                     "required": true,
+                    "contains": ["cisco sma message id"],
                     "order": 0
                 }
             },
@@ -453,7 +449,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.message_id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["cisco sma message id"]
                 },
                 {
                     "data_path": "action_result.data.*.mid",
@@ -504,7 +501,7 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "get general quarantine message details",
+            "action": "get quarantine message",
             "description": "Retrieves details of a message from general quarantine (PVO)",
             "type": "investigate",
             "identifier": "get_general_quarantine_message_details",
@@ -622,9 +619,9 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "release email",
-            "identifier": "release_email",
-            "description": "Release a quarantined email message",
+            "action": "release spam message",
+            "identifier": "release_spam_message",
+            "description": "Release a spam quarantined email message",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -643,7 +640,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.message_id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["cisco sma message id"]
                 },
                 {
                     "data_path": "action_result.data.*.action",
@@ -669,8 +667,8 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "release general quarantine email",
-            "identifier": "release_general_quarantine_email",
+            "action": "release quarantine message",
+            "identifier": "release_general_quarantine_message",
             "description": "Release a message from Policy, Virus, Outbreak, or other quarantines",
             "type": "generic",
             "read_only": false,
@@ -732,8 +730,8 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "delete email",
-            "identifier": "delete_email",
+            "action": "delete spam message",
+            "identifier": "delete_spam_message",
             "description": "Delete a spam quarantined email message",
             "type": "generic",
             "read_only": false,
@@ -753,7 +751,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.message_id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["cisco sma message id"]
                 },
                 {
                     "data_path": "action_result.data.*.action",
@@ -779,8 +778,8 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "delete general quarantine email",
-            "identifier": "delete_general_quarantine_email",
+            "action": "delete quarantine message",
+            "identifier": "delete_general_quarantine_message",
             "description": "Delete a message from Policy, Virus, Outbreak, or other quarantines",
             "type": "generic",
             "read_only": false,
@@ -949,7 +948,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.message_id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["cisco sma message id"]
                 },
                 {
                     "data_path": "action_result.parameter.status",
@@ -1061,7 +1061,8 @@
                     "description": "Message ID (mid) to retrieve details for",
                     "data_type": "string",
                     "required": true,
-                    "order": 0
+                    "order": 0,
+                    "contains": ["cisco sma message id"]
                 },
                 "icid": {
                     "description": "Incoming Connection ID",
@@ -1095,7 +1096,9 @@
                 },
                 {
                     "data_path": "action_result.parameter.mid",
-                    "data_type": "string"                },
+                    "data_type": "string",
+                    "contains": ["cisco sma message id"]
+                },
                 {
                     "data_path": "action_result.parameter.icid",
                     "data_type": "string"
@@ -1769,10 +1772,16 @@
                     "data_type": "string",
                     "order": 12
                 },
+                "device_type": {
+                    "description": "Type of device",
+                    "data_type": "string",
+                    "default": "esa",
+                    "order": 13
+                },
                 "device_name": {
                     "description": "Name of device",
                     "data_type": "string",
-                    "order": 13
+                    "order": 14
                 }
             },
             "output": [
