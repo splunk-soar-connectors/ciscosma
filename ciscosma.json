@@ -174,15 +174,21 @@
                 {
                     "data_path": "action_result.data.*.mid",
                     "data_type": "numeric",
-                    "contains": ["cisco sma message id"]
+                    "contains": ["cisco sma message id"],
+                    "column_name": "Message ID",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.attributes.subject",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Subject",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.attributes.date",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Date",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.attributes.fromAddress.*",
@@ -216,6 +222,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -356,11 +365,6 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.mid",
-                    "data_type": "numeric",
-                    "contains": ["cisco sma message id"]
-                },
-                {
                     "data_path": "action_result.parameter.start_date",
                     "data_type": "string"
                 },
@@ -433,8 +437,11 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.received",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.mid",
+                    "data_type": "numeric",
+                    "contains": ["cisco sma message id"],
+                    "column_name": "Message ID",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.attributes.sender",
@@ -443,7 +450,15 @@
                 },
                 {
                     "data_path": "action_result.data.*.attributes.subject",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Subject",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.received",
+                    "data_type": "string",
+                    "column_name": "Received",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.attributes.esaHostName",
@@ -504,6 +519,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -534,15 +552,21 @@
                 {
                     "data_path": "action_result.data.*.mid",
                     "data_type": "numeric",
-                    "contains": ["cisco sma message id"]
+                    "contains": ["cisco sma message id"],
+                    "column_name": "Message ID",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.attributes.subject",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Subject",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.attributes.date",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Date",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.attributes.fromAddress.*",
@@ -577,6 +601,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -607,11 +634,15 @@
                 {
                     "data_path": "action_result.data.*.mid",
                     "data_type": "numeric",
-                    "contains": ["cisco sma message id"]
+                    "contains": ["cisco sma message id"],
+                    "column_name": "Message ID",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.attributes.quarantineDetails.*.received",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Received",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.attributes.quarantineDetails.*.esaHostName",
@@ -663,7 +694,9 @@
                 },
                 {
                     "data_path": "action_result.data.*.attributes.messageDetails.subject",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Subject",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.attributes.messageBody",
@@ -695,6 +728,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -728,7 +764,9 @@
                 },
                 {
                     "data_path": "action_result.data.*.totalCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_name": "Total Count",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.summary.total_released",
@@ -743,6 +781,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -786,7 +827,9 @@
                 },
                 {
                     "data_path": "action_result.data.*.totalCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_name": "Total Count",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.summary.total_released",
@@ -805,6 +848,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -838,7 +884,9 @@
                 },
                 {
                     "data_path": "action_result.data.*.totalCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_name": "Total Count",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.summary.total_deleted",
@@ -853,6 +901,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -896,7 +947,9 @@
                 },
                 {
                     "data_path": "action_result.data.*.totalCount",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_name": "Total Count",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.summary.total_deleted",
@@ -915,6 +968,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1054,21 +1110,27 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.timestamp",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.attributes.hostName",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.attributes.subject",
                     "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.attributes.mid.*",
                     "data_type": "numeric",
-                    "contains": ["cisco sma message id"]
+                    "contains": ["cisco sma message id"],
+                    "column_name": "Message ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.subject",
+                    "data_type": "string",
+                    "column_name": "Subject",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.timestamp",
+                    "data_type": "string",
+                    "column_name": "Received",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.attributes.isCompleteData",
@@ -1125,6 +1187,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1195,16 +1260,22 @@
                 {
                     "data_path": "action_result.data.*.mid.*",
                     "data_type": "numeric",
-                    "contains": ["cisco sma message id"]
+                    "contains": ["cisco sma message id"],
+                    "column_name": "Message ID",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.subject",
                     "data_type": "string",
-                    "contains": ["email"]
+                    "contains": ["email"],
+                    "column_name": "Subject",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.messageStatus",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.direction",
@@ -1235,7 +1306,9 @@
                 },
                 {
                     "data_path": "action_result.data.*.timestamp",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Received",
+                    "column_order": 3
                 },
                 {
                     "data_path": "action_result.data.*.hostName",
@@ -1315,6 +1388,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1426,7 +1502,9 @@
                 },
                 {
                     "data_path": "action_result.summary.entries_returned",
-                    "data_type": "numeric"
+                    "data_type": "numeric",
+                    "column_name": "Total Entries",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.summary.list_type",
@@ -1437,6 +1515,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1546,13 +1627,18 @@
                 },
                 {
                     "data_path": "action_result.summary.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1662,13 +1748,18 @@
                 },
                 {
                     "data_path": "action_result.summary.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1758,13 +1849,18 @@
                 },
                 {
                     "data_path": "action_result.summary.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Status",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1792,73 +1888,79 @@
                     "required": true,
                     "order": 2
                 },
+                "device_type": {
+                    "description": "Type of device",
+                    "data_type": "string",
+                    "required": true,
+                    "default": "esa",
+                    "order": 3
+                },
+                "counter": {
+                    "description": "Counter group",
+                    "data_type": "string",
+                    "order": 4
+                },
                 "query_type": {
                     "description": "Type of query",
                     "data_type": "string",
                     "value_list": ["graph", "export"],
-                    "order": 3
+                    "order": 5
                 },
                 "order_by": {
                     "description": "Field to sort results by",
                     "data_type": "string",
-                    "order": 4
+                    "order": 6
                 },
                 "order_direction": {
                     "description": "Sort direction",
                     "data_type": "string",
                     "value_list": ["asc", "desc"],
                     "default": "desc",
-                    "order": 5
+                    "order": 7
                 },
                 "offset": {
                     "description": "Number of records to skip/offset",
                     "data_type": "numeric",
-                    "order": 6,
+                    "order": 8,
                     "default": 0
                 },
                 "limit": {
                     "description": "Max number of records to return",
                     "data_type": "numeric",
-                    "order": 7,
+                    "order": 9,
                     "default": 25
                 },
                 "top": {
                     "description": "Number of top records to return",
                     "data_type": "numeric",
                     "required": false,
-                    "order": 8
+                    "order": 10
                 },
                 "filter_value": {
                     "description": "Value to filter by",
                     "data_type": "string",
-                    "order": 9
+                    "order": 11
                 },
                 "filter_by": {
                     "description": "Field to filter by",
                     "data_type": "string",
-                    "order": 10
+                    "order": 12
                 },
                 "filter_operator": {
                     "description": "Filter operator",
                     "data_type": "string",
                     "value_list": ["begins_with", "is"],
-                    "order": 11
+                    "order": 13
                 },
                 "device_group_name": {
                     "description": "Name of device group",
                     "data_type": "string",
-                    "order": 12
-                },
-                "device_type": {
-                    "description": "Type of device",
-                    "data_type": "string",
-                    "default": "esa",
-                    "order": 13
+                    "order": 14
                 },
                 "device_name": {
                     "description": "Name of device",
                     "data_type": "string",
-                    "order": 14
+                    "order": 15
                 }
             },
             "output": [
@@ -1924,11 +2026,15 @@
                 },
                 {
                     "data_path": "action_result.data.*.type",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Type",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.resultSet",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Result Set",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.summary.report_type",
@@ -1943,6 +2049,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         },
         {
@@ -1982,11 +2091,15 @@
                 },
                 {
                     "data_path": "action_result.data.*.vault_id",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Vault ID",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.filename",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "column_name": "Filename",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.summary.vault_id",
@@ -2005,6 +2118,9 @@
                     "data_type": "string"
                 }
             ],
+            "render": {
+                "type": "table"
+            },
             "versions": "EQ(*)"
         }
     ]

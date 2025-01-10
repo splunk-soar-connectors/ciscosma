@@ -927,10 +927,15 @@ class CiscoSmaConnector(BaseConnector):
 
         start_date = param.get("start_date")
         end_date = param.get("end_date")
+        report_type = param.get("report_type")
+        device_type = param.get("device_type", "esa")
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
 
-        params = {"startDate": start_date, "endDate": end_date, "device_type": "esa"}
+        if not report_type:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'report_type' is required")
+
+        params = {"startDate": start_date, "endDate": end_date, "device_type": device_type}
 
         optional_params = {
             "query_type": "query_type",
@@ -943,7 +948,6 @@ class CiscoSmaConnector(BaseConnector):
             "filter_by": "filterBy",
             "filter_operator": "filterOperator",
             "device_group_name": "device_group_name",
-            "device_type": "device_type",
             "device_name": "device_name",
         }
 
@@ -963,8 +967,12 @@ class CiscoSmaConnector(BaseConnector):
                     phantom.APP_ERROR, f"Invalid parameter 'filter_operator'. Must be one of: {CISCOSMA_VALID_FILTER_OPERATORS_REPORT}"
                 )
 
-        report_type = param["report_type"]
-        endpoint = CISCOSMA_REPORTING_ENDPOINT.format(report_type)
+        counter = param.get("counter")
+
+        if counter:
+            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(f"{report_type}/{counter}")
+        else:
+            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(report_type)
 
         ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params)
 
