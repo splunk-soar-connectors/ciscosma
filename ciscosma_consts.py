@@ -38,6 +38,7 @@ CISCOSMA_DEFAULT_LIST_LIMIT = 25
 CISCOSMA_DEFAULT_LIST_OFFSET = 0
 
 CISCOSMA_GET_TOKEN_ENDPOINT = "/sma/api/v2.0/login"
+CISCOSMA_GET_SUBSCRIPTION_ENDPOINT = "/sma/api/v2.0/config/logs/subscriptions"
 CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT = "/sma/api/v2.0/quarantine/messages/details"
 CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT = "/sma/api/v2.0/message-tracking/details"
 CISCOSMA_SEARCH_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
@@ -46,5 +47,5 @@ CISCOSMA_RELEASE_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_DELETE_MESSAGES_ENDPOINT = "/sma/api/v2.0/quarantine/messages"
 CISCOSMA_SAFELIST_ENDPOINT = "/sma/api/v2.0/quarantine/safelist"
 CISCOSMA_BLOCKLIST_ENDPOINT = "/sma/api/v2.0/quarantine/blocklist"
-CISCOSMA_REPORTING_ENDPOINT = "sma/api/v2.0/reporting/{}"
+CISCOSMA_REPORTING_ENDPOINT = "/sma/api/v2.0/reporting/{}"
 CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT = "/sma/api/v2.0/quarantine/messages/attachment"

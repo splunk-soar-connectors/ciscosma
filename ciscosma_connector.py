@@ -24,6 +24,7 @@ import phantom.app as phantom
 import requests
 from phantom.action_result import ActionResult
 from phantom.base_connector import BaseConnector
+from phantom.vault import Vault
 
 from ciscosma_consts import (
     CISCOSMA_BLOCKLIST_ENDPOINT,
@@ -33,7 +34,7 @@ from ciscosma_consts import (
     CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT,
     CISCOSMA_GET_MESSAGE_DETAILS_ENDPOINT,
     CISCOSMA_GET_MESSAGE_TRACKING_DETAILS_ENDPOINT,
-    CISCOSMA_GET_TOKEN_ENDPOINT,
+    CISCOSMA_GET_SUBSCRIPTION_ENDPOINT,
     CISCOSMA_RELEASE_MESSAGES_ENDPOINT,
     CISCOSMA_REPORTING_ENDPOINT,
     CISCOSMA_SAFELIST_ENDPOINT,
@@ -59,7 +60,6 @@ class CiscoSmaConnector(BaseConnector):
         self._username = None
         self._password = None
         self._verify = False
-        self._jwt_token = None
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, json=None, method="get"):
         """Function that makes the REST call to the app.
@@ -74,27 +74,39 @@ class CiscoSmaConnector(BaseConnector):
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message),
         response obtained by making an API call
         """
-        resp_json = None
-
         try:
             kwargs = {"json": json, "data": data, "headers": headers, "params": params, "verify": self._verify}
 
             response = requests.request(method, endpoint, **kwargs)
 
-            try:
-                resp_json = response.json()
-            except ValueError:
-                return action_result.set_status(phantom.APP_ERROR, f"Invalid JSON response from server: {response.text}"), None
+            # Check if response is JSON
+            content_type = response.headers.get("Content-Type", "").lower()
+            if "application/json" in content_type:
+                try:
+                    resp_json = response.json()
+                except ValueError:
+                    return action_result.set_status(phantom.APP_ERROR, f"Invalid JSON response from server: {response.text}"), None
 
-            if response.status_code != 200:
-                return (
-                    action_result.set_status(
-                        phantom.APP_ERROR, f"API call failed. Status code: {response.status_code}. Response: {response.text}"
-                    ),
-                    None,
-                )
+                if response.status_code != 200:
+                    return (
+                        action_result.set_status(
+                            phantom.APP_ERROR, f"API call failed. Status code: {response.status_code}. Response: {response.text}"
+                        ),
+                        None,
+                    )
 
-            return phantom.APP_SUCCESS, resp_json
+                return phantom.APP_SUCCESS, resp_json
+            else:
+                # Return raw response object for non-JSON responses (downloading attachment)
+                if response.status_code != 200:
+                    return (
+                        action_result.set_status(
+                            phantom.APP_ERROR, f"API call failed. Status code: {response.status_code}. Response: {response.text}"
+                        ),
+                        None,
+                    )
+
+                return phantom.APP_SUCCESS, response
 
         except requests.exceptions.RequestException as e:
             return action_result.set_status(phantom.APP_ERROR, f"Error connecting to server: {str(e)}"), None
@@ -102,7 +114,7 @@ class CiscoSmaConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, f"Error making REST call: {str(e)}"), None
 
     def _make_authenticated_request(self, action_result, endpoint, headers=None, params=None, data=None, json_data=None, method="get"):
-        """Function that makes authenticated REST calls to the app with automatic token refresh.
+        """Function that makes authenticated REST calls to the app with auth details.
 
         :param endpoint: REST endpoint that needs to be appended to the service address
         :param action_result: object of ActionResult class
@@ -118,58 +130,18 @@ class CiscoSmaConnector(BaseConnector):
         if headers is None:
             headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
-        # Get Token
-        if not self._jwt_token:
-            ret_val, token = self._get_jwt_token(action_result)
-            if phantom.is_fail(ret_val):
-                return phantom.APP_ERROR, None
-            self._jwt_token = token
+        # Basic Auth header with encoded credentials
+        basic_auth = base64.b64encode(f"{self._username}:{self._password}".encode()).decode()
+        headers.update({"Authorization": f"Basic {basic_auth}"})
 
-        headers.update({"Authorization": f"Bearer {self._jwt_token}"})
+        self.save_progress(f"Making request to {url} with headers: {headers} and params: {params}")
 
         ret_val, resp_json = self._make_rest_call(url, action_result, headers, params, data, json_data, method)
-
-        # Generate new token if expired
-        if ret_val == phantom.APP_ERROR and "token" in action_result.get_message().lower():
-            ret_val, token = self._get_jwt_token(action_result)
-            if phantom.is_fail(ret_val):
-                return action_result.get_status(), None
-
-            self._jwt_token = token
-            headers.update({"Authorization": f"Bearer {self._jwt_token}"})
-
-            ret_val, resp_json = self._make_rest_call(url, action_result, headers, params, data, json_data, method)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
         return phantom.APP_SUCCESS, resp_json
-
-    def _get_jwt_token(self, action_result):
-        """Helper to get JWT token for authentication.
-
-        Args:
-            action_result (ActionResult): The action result object
-
-        Returns:
-            tuple: (action_result, jwt_token) or (action_result, None) on error
-        """
-        payload = {
-            "data": {
-                "userName": base64.b64encode(self._username.encode()).decode(),
-                "passphrase": base64.b64encode(self._password.encode()).decode(),
-            }
-        }
-
-        ret_val, resp_json = self._make_rest_call(f"{self._base_url}{CISCOSMA_GET_TOKEN_ENDPOINT}", action_result, json=payload, method="post")
-
-        if phantom.is_fail(ret_val):
-            return ret_val, None
-
-        if not (jwt_token := resp_json.get("data", {}).get("jwtToken")):
-            return action_result.set_status(phantom.APP_ERROR, "JWT token not found in response"), None
-
-        return phantom.APP_SUCCESS, jwt_token
 
     def _sanitize_file_name(self, file_name):
         """Helper to sanitize file name.
@@ -203,26 +175,32 @@ class CiscoSmaConnector(BaseConnector):
                 filename = content_disposition.split("filename*=")[-1].split("''")[-1]
 
             filename = filename or default_filename or "unknown_file"
-
             filename = self._sanitize_file_name(filename)
 
+            # Get content
+            content = response.text.strip()
+
+            # Decode base64 (SMA returns base64 encoded content)
+            try:
+                decoded_content = base64.b64decode(content)
+                content = decoded_content
+            except:
+                pass
+
             # Temp file
-            temp_dir = phantom.vault.get_vault_temp_dir()
-            fd, temp_path = tempfile.mkstemp(dir=temp_dir)
+            fd, tmp_file_path = tempfile.mkstemp(dir=Vault.get_vault_tmp_dir())
             os.close(fd)
 
-            # Download content in chunks
-            with open(temp_path, "wb") as temp_file:
-                for chunk in response.iter_content(chunk_size=128 * 1024):  # 128KB chunks
-                    if chunk:
-                        temp_file.write(chunk)
+            # Write content
+            with open(tmp_file_path, "wb") as f:
+                f.write(content if isinstance(content, bytes) else content.encode())
 
             # Add to vault
-            vault_ret = phantom.vault.vault_add(container=self.get_container_id(), file_location=temp_path, file_name=filename)
+            vault_ret = Vault.add_attachment(file_location=tmp_file_path, container_id=self.get_container_id(), file_name=filename)
 
             # Clean up
             try:
-                os.unlink(temp_path)
+                os.unlink(tmp_file_path)
             except:
                 pass
 
@@ -337,7 +315,9 @@ class CiscoSmaConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         self.save_progress("Connecting to Cisco SMA...")
-        ret_val, _ = self._make_authenticated_request(action_result, CISCOSMA_GET_TOKEN_ENDPOINT, method="post")
+
+        # Simple test for connection
+        ret_val, response = self._make_authenticated_request(action_result, CISCOSMA_GET_SUBSCRIPTION_ENDPOINT)
 
         if phantom.is_fail(ret_val):
             self.save_progress("Test Connectivity Failed")
@@ -813,7 +793,6 @@ class CiscoSmaConnector(BaseConnector):
             )
         params["orderDir"] = order_dir
 
-        # TODO: Check these constants may want to change
         offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
         limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
         params["offset"] = offset
@@ -993,19 +972,20 @@ class CiscoSmaConnector(BaseConnector):
     def _handle_download_attachment(self, param):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        required_params = {"message_id": "Message ID", "attachment_id": "Attachment ID", "quarantine_type": "Quarantine Type"}
+        message_id = param.get("message_id")
+        attachment_id = param.get("attachment_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
+        if not attachment_id:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'attachment_id' is required")
 
-        for param_name, display_name in required_params.items():
-            if not param.get(param_name):
-                return action_result.set_status(phantom.APP_ERROR, f"'{display_name}' is a required parameter")
-
-        params = {"mid": param["message_id"], "attachmentId": param["attachment_id"], "quarantineType": param["quarantine_type"]}
+        params = {"mid": message_id, "attachmentId": attachment_id, "quarantineType": "pvo"}
 
         headers = {"Accept": "*/*", "Content-Type": "application/json"}
 
         try:
             ret_val, response = self._make_authenticated_request(
-                action_result, CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT, params=params, headers=headers, stream=True
+                action_result, CISCOSMA_DOWNLOAD_ATTACHMENT_ENDPOINT, params=params, headers=headers
             )
 
             if phantom.is_fail(ret_val):
@@ -1022,7 +1002,7 @@ class CiscoSmaConnector(BaseConnector):
                     pass
 
             # Download and add to vault
-            default_filename = f"attachment_{param['message_id']}_{param['attachment_id']}"
+            default_filename = f"attachment_{message_id}_{attachment_id}"
             success, vault_id, filename, error_message = self._download_to_vault(action_result, response, default_filename)
 
             if not success:
@@ -1030,6 +1010,7 @@ class CiscoSmaConnector(BaseConnector):
 
             action_result.add_data(
                 {
+                    "vault_id": vault_id,
                     "filename": filename,
                 }
             )
