@@ -34,7 +34,7 @@ CISCOSMA_VALID_QUARANTINE_ORDER_BY = ["sender", "subject", "received", "schedule
 CISCOSMA_VALID_LIST_TYPES = ["safelist", "blocklist"]
 CISCOSMA_VALID_LIST_VIEW_BY = ["sender", "recipient"]
 CISCOSMA_VALID_LIST_ORDER_BY = ["sender", "recipient"]
-CISCOSMA_DEFAULT_LIST_LIMIT = 25
+CISCOSMA_DEFAULT_LIST_LIMIT = 100
 CISCOSMA_DEFAULT_LIST_OFFSET = 0
 
 CISCOSMA_GET_TOKEN_ENDPOINT = "/sma/api/v2.0/login"

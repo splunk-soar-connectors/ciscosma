@@ -77,53 +77,47 @@
                 "order_by": {
                     "description": "Field to sort results by",
                     "data_type": "string",
-                    "required": false,
                     "order": 2,
                     "value_list": ["from_address", "to_address", "subject"]
                 },
                 "order_direction": {
                     "description": "Sort direction",
                     "data_type": "string",
-                    "required": false,
                     "order": 3,
                     "value_list": ["asc", "desc"]
                 },
                 "offset": {
                     "description": "Number of records to skip/offset",
                     "data_type": "numeric",
-                    "required": false,
-                    "order": 4
+                    "order": 4,
+                    "default": 0
                 },
                 "limit": {
                     "description": "Max number of records to return",
                     "data_type": "numeric",
-                    "required": false,
-                    "order": 5
+                    "order": 5,
+                    "default": 100
                 },
                 "envelope_recipient_filter_operator": {
                     "description": "Operator for envelope recipient filter",
                     "data_type": "string",
-                    "required": false,
                     "order": 6,
                     "value_list": ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
                 },
                 "envelope_recipient_filter_value": {
                     "description": "Value for envelope recipient filter",
                     "data_type": "string",
-                    "required": false,
                     "order": 7
                 },
                 "filter_operator": {
                     "description": "Operator for general filter",
                     "data_type": "string",
-                    "required": false,
                     "order": 8,
                     "value_list": ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
                 },
                 "filter_value": {
                     "description": "Value for general filter",
                     "data_type": "string",
-                    "required": false,
                     "order": 9
                 }
             },
@@ -192,17 +186,17 @@
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.fromAddress.*",
+                    "data_path": "action_result.data.*.attributes.fromAddress",
                     "data_type": "string",
                     "contains": ["email"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.toAddress.*",
+                    "data_path": "action_result.data.*.attributes.toAddress",
                     "data_type": "string",
                     "contains": ["email"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.envelopeRecipient.*",
+                    "data_path": "action_result.data.*.attributes.envelopeRecipient",
                     "data_type": "string",
                     "contains": ["email"]
                 },
@@ -256,7 +250,6 @@
                 "subject_filter_by": {
                     "description": "How to filter the subject",
                     "data_type": "string",
-                    "required": false,
                     "order": 3,
                     "value_list": [
                         "contains", "starts_with", "ends_with", "matches_exactly",
@@ -266,71 +259,62 @@
                 "subject_filter_value": {
                     "description": "Value to filter subject by",
                     "data_type": "string",
-                    "required": false,
                     "order": 4
                 },
                 "originating_esa_ip": {
                     "description": "IP address of the ESA that processed the message",
                     "data_type": "string",
-                    "required": false,
                     "order": 5,
                     "contains": ["ip"]
                 },
                 "attachment_name": {
                     "description": "Filter by attachment name",
                     "data_type": "string",
-                    "required": false,
                     "order": 6
                 },
                 "attachment_size_filter_by": {
                     "description": "How to filter attachment size",
                     "data_type": "string",
-                    "required": false,
                     "order": 7,
                     "value_list": ["range", "less_than", "more_than"]
                 },
                 "attachment_size_from": {
                     "description": "Starting size in KB (for range/more_than)",
                     "data_type": "numeric",
-                    "required": false,
                     "order": 8
                 },
                 "attachment_size_to": {
                     "description": "Ending size in KB (for range/less_than)",
                     "data_type": "numeric",
-                    "required": false,
                     "order": 9
                 },
                 "order_by": {
                     "description": "Field to sort results by",
                     "data_type": "string",
-                    "required": false,
                     "order": 10,
                     "value_list": ["sender", "subject", "received", "scheduledExit", "size"]
                 },
                 "order_direction": {
                     "description": "Sort direction",
                     "data_type": "string",
-                    "required": false,
                     "order": 11,
                     "value_list": ["asc", "desc"]
                 },
                 "offset": {
                     "description": "Number of records to skip",
                     "data_type": "numeric",
-                    "required": false,
-                    "order": 12
+                    "order": 12,
+                    "default": 0
                 },
                 "limit": {
                     "description": "Maximum number of records to return",
                     "data_type": "numeric",
-                    "required": false,
-                    "order": 13
+                    "order": 13,
+                    "default": 100
                 },
                 "envelope_recipient_filter_by": {
                     "description": "How to filter envelope recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 14,
                     "value_list": [
                         "contains", "starts_with", "ends_with", "matches_exactly",
@@ -340,13 +324,11 @@
                 "envelope_recipient_filter_value": {
                     "description": "Value to filter envelope recipient by",
                     "data_type": "string",
-                    "required": false,
                     "order": 15
                 },
                 "envelope_sender_filter_by": {
                     "description": "How to filter envelope sender",
                     "data_type": "string",
-                    "required": false,
                     "order": 16,
                     "value_list": [
                         "contains", "starts_with", "ends_with", "matches_exactly",
@@ -356,7 +338,6 @@
                 "envelope_sender_filter_value": {
                     "description": "Value to filter envelope sender by",
                     "data_type": "string",
-                    "required": false,
                     "order": 17
                 }
             },
@@ -479,11 +460,11 @@
                     "contains": ["ip"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.quarantineForReason.*",
+                    "data_path": "action_result.data.*.attributes.quarantineForReason",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.quarantineForReasonDict.*.reason.*",
+                    "data_path": "action_result.data.*.attributes.quarantineForReasonDict.*.reason",
                     "data_type": "string"
                 },
                 {
@@ -495,7 +476,7 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.recipient.*",
+                    "data_path": "action_result.data.*.attributes.recipient",
                     "data_type": "string",
                     "contains": ["email"]
                 },
@@ -570,22 +551,22 @@
                     "column_order": 2
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.fromAddress.*",
+                    "data_path": "action_result.data.*.attributes.fromAddress",
                     "data_type": "string",
                     "contains": ["email"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.toAddress.*",
+                    "data_path": "action_result.data.*.attributes.toAddress",
                     "data_type": "string",
                     "contains": ["email"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.envelopeRecipient.*",
+                    "data_path": "action_result.data.*.attributes.envelopeRecipient",
                     "data_type": "string",
                     "contains": ["email"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.attachments.*",
+                    "data_path": "action_result.data.*.attributes.attachments",
                     "data_type": "string",
                     "contains": ["file_name"]
                 },
@@ -654,7 +635,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.reason.*",
+                    "data_path": "action_result.data.*.attributes.quarantineDetails.*.reason",
                     "data_type": "string"
                 },
                 {
@@ -667,7 +648,7 @@
                     "contains": ["ip"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.matchedContents.*",
+                    "data_path": "action_result.data.*.attributes.matchedContents",
                     "data_type": "string"
                 },
                 {
@@ -684,7 +665,7 @@
                     "contains": ["file_name"]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.messageDetails.recipient.*",
+                    "data_path": "action_result.data.*.attributes.messageDetails.recipient",
                     "data_type": "string",
                     "contains": ["email"]
                 },
@@ -993,54 +974,93 @@
                     "required": true,
                     "order": 1
                 },
+                "search_option": {
+                    "description": "Search option type",
+                    "data_type": "string",
+                    "order": 2,
+                    "value_list": ["messages", "rejected_connections"],
+                    "default": "messages"
+                },
+                "offset": {
+                    "description": "Number of records to skip",
+                    "data_type": "numeric",
+                    "order": 3,
+                    "default": 0
+                },
+                "limit": {
+                    "description": "Maximum number of records to return",
+                    "data_type": "numeric",
+                    "order": 4,
+                    "default": 100
+                },
                 "cisco_host": {
                     "description": "Specific appliance to search (default: All_Hosts)",
                     "data_type": "string",
-                    "required": false,
-                    "order": 2
-                },
-                "offset": {
-                    "description": "Number of records to skip/offset",
-                    "data_type": "numeric",
-                    "required": false,
-                    "order": 3
-                },
-                "limit": {
-                    "description": "Max number of records to return",
-                    "data_type": "numeric",
-                    "required": false,
-                    "order": 4
-                },
-                "sender": {
-                    "description": "Filter by sender email address",
-                    "data_type": "string",
-                    "required": false,
                     "order": 5
                 },
-                "recipient": {
-                    "description": "Filter by recipient email address",
+                "sender_ip": {
+                    "description": "Sender IP address to search for",
                     "data_type": "string",
-                    "required": false,
-                    "order": 6
+                    "order": 6,
+                    "contains": ["ip"]
                 },
-                "subject": {
-                    "description": "Filter by message subject",
+                "sender_filter_operator": {
+                    "description": "Envelope sender filter operator",
                     "data_type": "string",
-                    "required": false,
-                    "order": 7
+                    "order": 7,
+                    "value_list": ["contains", "is", "begins_with"]
                 },
-                "message_id": {
-                    "description": "Filter by message ID (mid)",
+                "sender_filter_value": {
+                    "description": "Envelope sender filter value",
                     "data_type": "string",
-                    "required": false,
-                    "order": 8
+                    "order": 8,
+                    "contains": ["email"]
                 },
-                "status": {
-                    "description": "Filter by message status",
+                "recipient_filter_operator": {
+                    "description": "Envelope recipient filter operator",
                     "data_type": "string",
-                    "required": false,
                     "order": 9,
-                    "value_list": ["Delivered", "Hard Bounced", "Soft Bounced", "Spam", "Virus Positive", "Quarantined"]
+                    "value_list": ["contains", "is", "begins_with"]
+                },
+                "recipient_filter_value": {
+                    "description": "Envelope recipient filter value",
+                    "data_type": "string",
+                    "order": 10,
+                    "contains": ["email"]
+                },
+                "subject_filter_operator": {
+                    "description": "Subject filter operator",
+                    "data_type": "string",
+                    "order": 11,
+                    "value_list": ["contains", "is", "begins_with"]
+                },
+                "subject_filter_value": {
+                    "description": "Subject filter value",
+                    "data_type": "string",
+                    "order": 12
+                },
+                "attachment_name_operator": {
+                    "description": "Attachment name filter operator",
+                    "data_type": "string",
+                    "order": 13,
+                    "value_list": ["contains", "is", "begins_with"]
+                },
+                "attachment_name_value": {
+                    "description": "Attachment name filter value",
+                    "data_type": "string",
+                    "order": 14,
+                    "contains": ["file name"]
+                },
+                "file_sha_256": {
+                    "description": "SHA256 hash to search for",
+                    "data_type": "string",
+                    "order": 15,
+                    "contains": ["sha256"]
+                },
+                "message_id_header": {
+                    "description": "Message ID header to search for",
+                    "data_type": "string",
+                    "order": 16
                 }
             },
             "output": [
@@ -1057,7 +1077,55 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.parameter.search_option",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.cisco_host",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.sender_ip",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.sender_filter_operator",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.sender_filter_value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.recipient_filter_operator",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.recipient_filter_value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.subject_filter_operator",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.subject_filter_value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.attachment_name_operator",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.attachment_name_value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.file_sha_256",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.message_id_header",
                     "data_type": "string"
                 },
                 {
@@ -1067,27 +1135,6 @@
                 {
                     "data_path": "action_result.parameter.limit",
                     "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.parameter.sender",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.recipient",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.subject",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.message_id",
-                    "data_type": "string",
-                    "contains": ["cisco sma message id"]
-                },
-                {
-                    "data_path": "action_result.parameter.status",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.attributes.direction",
@@ -1115,7 +1162,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.mid.*",
+                    "data_path": "action_result.data.*.attributes.mid",
                     "data_type": "numeric",
                     "contains": ["cisco sma message id"],
                     "column_name": "Message ID",
@@ -1142,7 +1189,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.mailPolicy.*",
+                    "data_path": "action_result.data.*.attributes.mailPolicy",
                     "data_type": "string"
                 },
                 {
@@ -1159,7 +1206,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.recipient.*",
+                    "data_path": "action_result.data.*.attributes.recipient",
                     "data_type": "string",
                     "contains": ["email"]
                 },
@@ -1210,25 +1257,21 @@
                 "icid": {
                     "description": "Incoming Connection ID",
                     "data_type": "string",
-                    "required": false,
                     "order": 1
                 },
                 "serial_number": {
                     "description": "Appliance serial number",
                     "data_type": "string",
-                    "required": false,
                     "order": 2
                 },
                 "start_date": {
                     "description": "Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
                     "data_type": "string",
-                    "required": false,
                     "order": 3
                 },
                 "end_date": {
                     "description": "End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
                     "data_type": "string",
-                    "required": false,
                     "order": 4
                 }
             },
@@ -1259,7 +1302,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.mid.*",
+                    "data_path": "action_result.data.*.mid",
                     "data_type": "numeric",
                     "contains": ["cisco sma message id"],
                     "column_name": "Message ID",
@@ -1288,12 +1331,12 @@
                     "contains": ["email"]
                 },
                 {
-                    "data_path": "action_result.data.*.recipient.*",
+                    "data_path": "action_result.data.*.recipient",
                     "data_type": "string",
                     "contains": ["email"]
                 },
                 {
-                    "data_path": "action_result.data.*.attachments.*",
+                    "data_path": "action_result.data.*.attachments",
                     "data_type": "string",
                     "contains": ["file_name"]
                 },
@@ -1365,7 +1408,7 @@
                     "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.mailPolicy.*",
+                    "data_path": "action_result.data.*.mailPolicy",
                     "data_type": "string"
                 },
                 {
@@ -1404,7 +1447,7 @@
                 "list_type": {
                     "description": "Type of list to search",
                     "data_type": "string",
-                    "required": false,
+                    "required": true,
                     "order": 0,
                     "value_list": ["safelist", "blocklist"],
                     "default": "safelist"
@@ -1412,7 +1455,6 @@
                 "view_by": {
                     "description": "View entries by sender or recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 1,
                     "value_list": ["sender", "recipient"],
                     "default": "recipient"
@@ -1420,7 +1462,6 @@
                 "order_by": {
                     "description": "Field to sort results by",
                     "data_type": "string",
-                    "required": false,
                     "order": 2,
                     "value_list": ["sender", "recipient"],
                     "default": "recipient"
@@ -1428,7 +1469,6 @@
                 "order_direction": {
                     "description": "Sort direction",
                     "data_type": "string",
-                    "required": false,
                     "order": 3,
                     "value_list": ["asc", "desc"],
                     "default": "desc"
@@ -1436,21 +1476,18 @@
                 "offset": {
                     "description": "Number of records to skip/offset",
                     "data_type": "numeric",
-                    "required": false,
                     "order": 4,
                     "default": 0
                 },
                 "limit": {
                     "description": "Max number of records to return",
                     "data_type": "numeric",
-                    "required": false,
                     "order": 5,
-                    "default": 25
+                    "default": 100
                 },
                 "search": {
                     "description": "Search term (only supported when order_by=recipient)",
                     "data_type": "string",
-                    "required": false,
                     "order": 6
                 }
             },
@@ -1488,14 +1525,18 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.senderList.*",
+                    "data_path": "action_result.data.*.senderList",
                     "data_type": "string",
-                    "contains": ["email"]
+                    "contains": ["email"],
+                    "column_name": "Sender List",
+                    "column_order": 0
                 },
                 {
-                    "data_path": "action_result.data.*.recipientAddress.*",
+                    "data_path": "action_result.data.*.recipientAddress",
                     "data_type": "string",
-                    "contains": ["email"]
+                    "contains": ["email"],
+                    "column_name": "Recipient Address",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.summary.total_entries",
@@ -1503,9 +1544,7 @@
                 },
                 {
                     "data_path": "action_result.summary.entries_returned",
-                    "data_type": "numeric",
-                    "column_name": "Total Entries",
-                    "column_order": 0
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.summary.list_type",
@@ -1531,7 +1570,7 @@
                 "list_type": {
                     "description": "Type of list to add entry to",
                     "data_type": "string",
-                    "required": false,
+                    "required": true,
                     "order": 0,
                     "value_list": ["safelist", "blocklist"],
                     "default": "safelist"
@@ -1539,7 +1578,6 @@
                 "view_by": {
                     "description": "Add entry by sender or recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 1,
                     "value_list": ["sender", "recipient"],
                     "default": "recipient"
@@ -1547,25 +1585,21 @@
                 "recipient_addresses": {
                     "description": "Recipient email addresses (comma-separated if multiple) - Required with view_by=recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 2
                 },
                 "sender_list": {
                     "description": "Sender addresses or domains (comma-separated if multiple) - Required with view_by=recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 3
                 },
                 "sender_addresses": {
                     "description": "Sender addresses or domains (comma-separated if multiple) - Required with view_by=sender",
                     "data_type": "string",
-                    "required": false,
                     "order": 4
                 },
                 "recipient_list": {
                     "description": "Recipient email addresses (comma-separated if multiple) - Required with view_by=sender",
                     "data_type": "string",
-                    "required": false,
                     "order": 5
                 }
             },
@@ -1603,19 +1637,19 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.recipientAddresses.*",
+                    "data_path": "action_result.data.*.recipientAddresses",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.senderList.*",
+                    "data_path": "action_result.data.*.senderList",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.senderAddresses.*",
+                    "data_path": "action_result.data.*.senderAddresses",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.recipientList.*",
+                    "data_path": "action_result.data.*.recipientList",
                     "data_type": "string"
                 },
                 {
@@ -1652,7 +1686,7 @@
                 "list_type": {
                     "description": "Type of list to edit entry in",
                     "data_type": "string",
-                    "required": false,
+                    "required": true,
                     "order": 0,
                     "value_list": ["safelist", "blocklist"],
                     "default": "safelist"
@@ -1660,7 +1694,6 @@
                 "view_by": {
                     "description": "Edit entry by sender or recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 1,
                     "value_list": ["sender", "recipient"],
                     "default": "recipient"
@@ -1668,25 +1701,21 @@
                 "recipient_addresses": {
                     "description": "Recipient email addresses (comma-separated if multiple) - Required with view_by=recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 2
                 },
                 "sender_list": {
                     "description": "Sender addresses or domains (comma-separated if multiple) - Required with view_by=recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 3
                 },
                 "sender_addresses": {
                     "description": "Sender addresses or domains (comma-separated if multiple) - Required with view_by=sender",
                     "data_type": "string",
-                    "required": false,
                     "order": 4
                 },
                 "recipient_list": {
                     "description": "Recipient email addresses (comma-separated if multiple) - Required with view_by=sender",
                     "data_type": "string",
-                    "required": false,
                     "order": 5
                 }
             },
@@ -1724,19 +1753,19 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.recipientAddresses.*",
+                    "data_path": "action_result.data.*.recipientAddresses",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.senderList.*",
+                    "data_path": "action_result.data.*.senderList",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.senderAddresses.*",
+                    "data_path": "action_result.data.*.senderAddresses",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.recipientList.*",
+                    "data_path": "action_result.data.*.recipientList",
                     "data_type": "string"
                 },
                 {
@@ -1773,7 +1802,7 @@
                 "list_type": {
                     "description": "Type of list to delete entry from",
                     "data_type": "string",
-                    "required": false,
+                    "required": true,
                     "order": 0,
                     "value_list": ["safelist", "blocklist"],
                     "default": "safelist"
@@ -1781,7 +1810,6 @@
                 "view_by": {
                     "description": "Delete entry by sender or recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 1,
                     "value_list": ["sender", "recipient"],
                     "default": "recipient"
@@ -1789,13 +1817,11 @@
                 "recipient_list": {
                     "description": "Recipient email addresses (comma-separated if multiple) - Required with view_by=recipient",
                     "data_type": "string",
-                    "required": false,
                     "order": 2
                 },
                 "sender_list": {
                     "description": "Sender addresses or domains (comma-separated if multiple) - Required with view_by=sender",
                     "data_type": "string",
-                    "required": false,
                     "order": 3
                 }
             },
@@ -1829,11 +1855,11 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.recipientList.*",
+                    "data_path": "action_result.data.*.recipientList",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.senderList.*",
+                    "data_path": "action_result.data.*.senderList",
                     "data_type": "string"
                 },
                 {
@@ -1872,13 +1898,13 @@
             "read_only": true,
             "parameters": {
                 "start_date": {
-                    "description": "Start date and time (format: YYYY-MM-DDThh:mm:00.000Z)",
+                    "description": "Start date and time (format: YYYY-MM-DDThh:mm:ss.000Z)",
                     "data_type": "string",
                     "required": true,
                     "order": 0
                 },
                 "end_date": {
-                    "description": "End date and time (format: YYYY-MM-DDThh:mm:00.000Z)",
+                    "description": "End date and time (format: YYYY-MM-DDThh:mm:ss.000Z)",
                     "data_type": "string",
                     "required": true,
                     "order": 1
@@ -1929,12 +1955,11 @@
                     "description": "Max number of records to return",
                     "data_type": "numeric",
                     "order": 9,
-                    "default": 25
+                    "default": 100
                 },
                 "top": {
                     "description": "Number of top records to return",
                     "data_type": "numeric",
-                    "required": false,
                     "order": 10
                 },
                 "filter_value": {

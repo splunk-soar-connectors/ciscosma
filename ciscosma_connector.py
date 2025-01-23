@@ -334,13 +334,14 @@ class CiscoSmaConnector(BaseConnector):
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
 
-        params = {"startDate": start_date, "endDate": end_date, "quarantineType": "spam"}
+        offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
+        limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
+
+        params = {"startDate": start_date, "endDate": end_date, "quarantineType": "spam", "offset": offset, "limit": limit}
 
         optional_params = {
             "order_by": "orderBy",
             "order_direction": "orderDir",
-            "offset": "offset",
-            "limit": "limit",
             "envelope_recipient_filter_operator": "envelopeRecipientFilterOperator",
             "envelope_recipient_filter_value": "envelopeRecipientFilterValue",
             "filter_operator": "filterOperator",
@@ -402,7 +403,10 @@ class CiscoSmaConnector(BaseConnector):
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
 
-        params = {"startDate": start_date, "endDate": end_date, "quarantineType": "pvo"}
+        offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
+        limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
+
+        params = {"startDate": start_date, "endDate": end_date, "quarantineType": "pvo", "offset": offset, "limit": limit}
 
         quarantines = param.get("quarantines")
         if not quarantines:
@@ -419,8 +423,6 @@ class CiscoSmaConnector(BaseConnector):
             "attachment_size_to": "attachmentSizeToValue",
             "order_by": "orderBy",
             "order_direction": "orderDir",
-            "offset": "offset",
-            "limit": "limit",
             "envelope_recipient_filter_by": "envelopeRecipientFilterBy",
             "envelope_recipient_filter_value": "envelopeRecipientFilterValue",
             "envelope_sender_filter_by": "envelopeSenderFilterBy",
@@ -686,18 +688,34 @@ class CiscoSmaConnector(BaseConnector):
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
 
-        params = {"startDate": start_date, "endDate": end_date, "searchOption": "messages"}
+        offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
+        limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
+        search_option = param.get("search_option", "messages")
 
-        # TODO: Confirm these params (documentation is unclear)
+        params = {"startDate": start_date, "endDate": end_date, "searchOption": search_option, "offset": offset, "limit": limit}
+
+        # Filter pairs
+        filter_pairs = {
+            ("sender_filter_operator", "sender_filter_value"): ("envelopeSenderfilterOperator", "envelopeSenderfilterValue"),
+            ("recipient_filter_operator", "recipient_filter_value"): ("envelopeRecipientfilterOperator", "envelopeRecipientfilterValue"),
+            ("subject_filter_operator", "subject_filter_value"): ("subjectfilterOperator", "subjectfilterValue"),
+            ("attachment_name_operator", "attachment_name_value"): ("attachmentNameOperator", "attachmentNameValue"),
+        }
+
+        for (op_param, val_param), (op_name, val_name) in filter_pairs.items():
+            operator = param.get(op_param)
+            value = param.get(val_param)
+            if operator and value:
+                params[op_name] = operator
+                params[val_name] = value
+            elif operator or value:
+                return action_result.set_status(phantom.APP_ERROR, f"Both {op_param} and {val_param} must be provided together")
+
         optional_params = {
             "cisco_host": "ciscoHost",
-            "offset": "offset",
-            "limit": "limit",
-            "sender": "sender",
-            "recipient": "recipient",
-            "subject": "subject",
-            "message_id": "mid",
-            "status": "status",
+            "sender_ip": "senderIp",
+            "file_sha_256": "fileSha256",
+            "message_id_header": "messageIdHeader",
         }
 
         for param_name, api_param in optional_params.items():
@@ -914,14 +932,15 @@ class CiscoSmaConnector(BaseConnector):
         if not report_type:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'report_type' is required")
 
-        params = {"startDate": start_date, "endDate": end_date, "device_type": device_type}
+        offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
+        limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
+
+        params = {"startDate": start_date, "endDate": end_date, "device_type": device_type, "offset": offset, "limit": limit}
 
         optional_params = {
             "query_type": "query_type",
             "order_by": "orderBy",
             "order_direction": "orderDir",
-            "offset": "offset",
-            "limit": "limit",
             "top": "top",
             "filter_value": "filterValue",
             "filter_by": "filterBy",
