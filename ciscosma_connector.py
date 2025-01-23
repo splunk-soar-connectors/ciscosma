@@ -177,7 +177,6 @@ class CiscoSmaConnector(BaseConnector):
             filename = filename or default_filename or "unknown_file"
             filename = self._sanitize_file_name(filename)
 
-            # Get content
             content = response.text.strip()
 
             # Decode base64 (SMA returns base64 encoded content)
@@ -187,18 +186,15 @@ class CiscoSmaConnector(BaseConnector):
             except:
                 pass
 
-            # Temp file
             fd, tmp_file_path = tempfile.mkstemp(dir=Vault.get_vault_tmp_dir())
             os.close(fd)
 
-            # Write content
             with open(tmp_file_path, "wb") as f:
                 f.write(content if isinstance(content, bytes) else content.encode())
 
             # Add to vault
             vault_ret = Vault.add_attachment(file_location=tmp_file_path, container_id=self.get_container_id(), file_name=filename)
 
-            # Clean up
             try:
                 os.unlink(tmp_file_path)
             except:
