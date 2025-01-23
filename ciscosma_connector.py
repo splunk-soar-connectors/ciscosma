@@ -743,8 +743,11 @@ class CiscoSmaConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
+        serial_number = param.get("serial_number")
         if not message_id:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' is required")
+        if not serial_number:
+            return action_result.set_status(phantom.APP_ERROR, "Parameter 'serial_number' is required")
 
         try:
             message_id = int(message_id)
@@ -753,7 +756,7 @@ class CiscoSmaConnector(BaseConnector):
 
         params = {"mid": message_id}
 
-        optional_params = {"icid": "icid", "serial_number": "serialNumber", "start_date": "startDate", "end_date": "endDate"}
+        optional_params = {"icid": "icid", "start_date": "startDate", "end_date": "endDate"}
 
         for param_name, api_param in optional_params.items():
             if value := param.get(param_name):

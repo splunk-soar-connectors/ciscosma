@@ -1254,13 +1254,14 @@
                     "order": 0,
                     "contains": ["cisco sma message id"]
                 },
-                "icid": {
-                    "description": "Incoming Connection ID",
-                    "data_type": "string",
-                    "order": 1
-                },
                 "serial_number": {
                     "description": "Appliance serial number",
+                    "data_type": "string",
+                    "order": 1,
+                    "required": true
+                },
+                "icid": {
+                    "description": "Incoming Connection ID",
                     "data_type": "string",
                     "order": 2
                 },
@@ -2059,7 +2060,7 @@
                 {
                     "data_path": "action_result.data.*.resultSet",
                     "data_type": "string",
-                    "column_name": "Result Set",
+                    "column_name": "Result Set (JSON object)",
                     "column_order": 1
                 },
                 {
