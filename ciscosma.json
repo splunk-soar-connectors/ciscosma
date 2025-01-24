@@ -48,7 +48,6 @@
             "action": "test connectivity",
             "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "",
             "type": "test",
             "read_only": true,
             "parameters": {},
@@ -109,16 +108,22 @@
                     "data_type": "string",
                     "order": 7
                 },
+                "filter_by": {
+                    "description": "Field to filter by",
+                    "data_type": "string",
+                    "order": 8,
+                    "value_list": ["fromAddress", "toAddress", "subject", "date", "size"]
+                },
                 "filter_operator": {
                     "description": "Operator for general filter",
                     "data_type": "string",
-                    "order": 8,
+                    "order": 9,
                     "value_list": ["contains", "is", "begins_with", "ends_with", "does_not_contain"]
                 },
                 "filter_value": {
                     "description": "Value for general filter",
                     "data_type": "string",
-                    "order": 9
+                    "order": 10
                 }
             },
             "output": [
@@ -156,6 +161,10 @@
                 },
                 {
                     "data_path": "action_result.parameter.envelope_recipient_filter_value",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.filter_by",
                     "data_type": "string"
                 },
                 {
@@ -210,6 +219,14 @@
                 },
                 {
                     "data_path": "action_result.summary.messages_returned",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
@@ -279,12 +296,12 @@
                     "value_list": ["range", "less_than", "more_than"]
                 },
                 "attachment_size_from": {
-                    "description": "Starting size in KB (for range/more_than)",
+                    "description": "Starting size in KB (for range/less_than)",
                     "data_type": "numeric",
                     "order": 8
                 },
                 "attachment_size_to": {
-                    "description": "Ending size in KB (for range/less_than)",
+                    "description": "Ending size in KB (for range/more_than)",
                     "data_type": "numeric",
                     "order": 9
                 },
@@ -368,7 +385,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.originating_esa_ip",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["ip"]
                 },
                 {
                     "data_path": "action_result.parameter.attachment_name",
@@ -497,6 +515,14 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -579,6 +605,14 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -598,6 +632,7 @@
                 "message_id": {
                     "description": "Message ID to retrieve details for",
                     "data_type": "string",
+                    "order": 0,
                     "required": true,
                     "primary": true,
                     "contains": ["cisco sma message id"]
@@ -706,6 +741,14 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -757,6 +800,14 @@
                 {
                     "data_path": "action_result.summary.action",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
@@ -826,6 +877,14 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -877,6 +936,14 @@
                 {
                     "data_path": "action_result.summary.action",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
@@ -944,6 +1011,14 @@
                 {
                     "data_path": "action_result.summary.quarantine_name",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
@@ -1086,7 +1161,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.sender_ip",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["ip"]
                 },
                 {
                     "data_path": "action_result.parameter.sender_filter_operator",
@@ -1094,7 +1170,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.sender_filter_value",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["email"]
                 },
                 {
                     "data_path": "action_result.parameter.recipient_filter_operator",
@@ -1102,7 +1179,8 @@
                 },
                 {
                     "data_path": "action_result.parameter.recipient_filter_value",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["email"]
                 },
                 {
                     "data_path": "action_result.parameter.subject_filter_operator",
@@ -1118,11 +1196,13 @@
                 },
                 {
                     "data_path": "action_result.parameter.attachment_name_value",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["file name"]
                 },
                 {
                     "data_path": "action_result.parameter.file_sha_256",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "contains": ["sha256"]
                 },
                 {
                     "data_path": "action_result.parameter.message_id_header",
@@ -1228,6 +1308,14 @@
                 },
                 {
                     "data_path": "action_result.summary.bad_records",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
@@ -1429,6 +1517,14 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -1552,6 +1648,14 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -1666,6 +1770,14 @@
                     "data_type": "string",
                     "column_name": "Status",
                     "column_order": 0
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
@@ -1784,6 +1896,14 @@
                     "column_order": 0
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -1882,6 +2002,14 @@
                     "column_order": 0
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -1943,7 +2071,6 @@
                     "description": "Sort direction",
                     "data_type": "string",
                     "value_list": ["asc", "desc"],
-                    "default": "desc",
                     "order": 7
                 },
                 "offset": {
@@ -2072,6 +2199,14 @@
                     "data_type": "numeric"
                 },
                 {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 }
@@ -2139,6 +2274,14 @@
                 {
                     "data_path": "action_result.summary.size",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
