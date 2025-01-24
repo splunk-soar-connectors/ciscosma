@@ -25,6 +25,6 @@
 
 ## API Documentation
 
-Cisco SMA API Docs: [Cisco SMA API Documentation](https://www.cisco.com/c/en/us/td/docs/security/security_management/sma/sma15-5-1/api_guide/b_sma_api_guide_15_5_1/test_chapter_010.html)
+Cisco SMA API Docs For Reference: [Cisco SMA API Documentation](https://www.cisco.com/c/en/us/td/docs/security/security_management/sma/sma15-5-1/api_guide/b_sma_api_guide_15_5_1/test_chapter_010.html)
 
 API Version: **15.5.1**
