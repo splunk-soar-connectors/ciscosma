@@ -134,8 +134,6 @@ class CiscoSmaConnector(BaseConnector):
         basic_auth = base64.b64encode(f"{self._username}:{self._password}".encode()).decode()
         headers.update({"Authorization": f"Basic {basic_auth}"})
 
-        self.save_progress("Making request to {url} with headers: {headers} and params: {params}")
-
         ret_val, resp_json = self._make_rest_call(url, action_result, headers, params, data, json_data, method)
 
         if phantom.is_fail(ret_val):
@@ -323,6 +321,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_search_spam_quarantine_messages(self, param):
+        self.save_progress("Searching for spam quarantine messages...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         start_date = param.get("start_date")
@@ -395,6 +395,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved messages")
 
     def _handle_search_general_quarantine_messages(self, param):
+        self.save_progress("Searching for general quarantine messages...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         start_date = param.get("start_date")
@@ -475,6 +477,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved quarantine messages")
 
     def _handle_get_spam_quarantine_message_details(self, param):
+        self.save_progress("Getting details for spam quarantine message...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -504,6 +508,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message details")
 
     def _handle_get_general_quarantine_message_details(self, param):
+        self.save_progress("Getting details for general quarantine message...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -541,6 +547,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved general quarantine message details")
 
     def _handle_release_spam_message(self, param):
+        self.save_progress("Releasing spam message...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -574,6 +582,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully released message")
 
     def _handle_release_general_quarantine_message(self, param):
+        self.save_progress("Releasing general quarantine message...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -615,6 +625,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully released message from general quarantine")
 
     def _handle_delete_spam_message(self, param):
+        self.save_progress("Deleting spam message...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -650,6 +662,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully deleted message")
 
     def _handle_delete_general_quarantine_message(self, param):
+        self.save_progress("Deleting general quarantine message...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -694,6 +708,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully deleted message from general quarantine")
 
     def _handle_search_tracking_messages(self, param):
+        self.save_progress("Searching for tracking messages...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         start_date = param.get("start_date")
@@ -759,6 +775,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved tracking messages")
 
     def _handle_get_message_tracking_details(self, param):
+        self.save_progress("Getting details for tracking message...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
@@ -805,6 +823,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved message tracking details")
 
     def _handle_search_list(self, param):
+        self.save_progress("Searching for list entries...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         list_type = param.get("list_type", "safelist").lower()
@@ -866,6 +886,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, f"Successfully retrieved {list_type} entries")
 
     def _handle_add_list_entry(self, param):
+        self.save_progress("Adding list entry...")
+
         action_result, payload, endpoint = self._list_entry_operation_setup(param, "add")
         if payload is None:
             return action_result.get_status()
@@ -893,6 +915,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, f"Successfully added entry in {summary['list_type']}")
 
     def _handle_edit_list_entry(self, param):
+        self.save_progress("Editing list entry...")
+
         action_result, payload, endpoint = self._list_entry_operation_setup(param, "edit")
         if payload is None:
             return action_result.get_status()
@@ -920,6 +944,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, f"Successfully edited entry in {summary['list_type']}")
 
     def _handle_delete_list_entry(self, param):
+        self.save_progress("Deleting list entry...")
+
         action_result, payload, endpoint = self._list_entry_operation_setup(param, "delete")
         if payload is None:
             return action_result.get_status()
@@ -954,6 +980,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, f"Successfully deleted entries from {summary['list_type']}")
 
     def _handle_get_statistics_report(self, param):
+        self.save_progress("Getting statistics report...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         start_date = param.get("start_date")
@@ -1025,6 +1053,8 @@ class CiscoSmaConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved statistics report")
 
     def _handle_download_attachment(self, param):
+        self.save_progress("Downloading attachment...")
+
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         message_id = param.get("message_id")
