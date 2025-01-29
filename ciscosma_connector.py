@@ -150,7 +150,7 @@ class CiscoSmaConnector(BaseConnector):
         Returns:
             str: Sanitized file name
         """
-        return re.sub("[,\"']", "", file_name)
+        return re.sub(r"""[,"']""", "", file_name)
 
     def _download_to_vault(self, action_result, response, default_filename=None):
         """Helper function to download content and add to vault.

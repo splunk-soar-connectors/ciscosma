@@ -1069,9 +1069,10 @@
                     "default": 100
                 },
                 "cisco_host": {
-                    "description": "Specific appliance to search (default: All_Hosts)",
+                    "description": "Specific appliance to search",
                     "data_type": "string",
-                    "order": 5
+                    "order": 5,
+                    "default": "All_Hosts"
                 },
                 "sender_ip": {
                     "description": "Sender IP address to search for",
