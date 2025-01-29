@@ -410,7 +410,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **search_option** | optional | Search option type | string | |
 **offset** | optional | Number of records to skip | numeric | |
 **limit** | optional | Maximum number of records to return | numeric | |
-**cisco_host** | optional | Specific appliance to search (default: All_Hosts) | string | |
+**cisco_host** | optional | Specific appliance to search | string | |
 **sender_ip** | optional | Sender IP address to search for | string | `ip` |
 **sender_filter_operator** | optional | Envelope sender filter operator | string | |
 **sender_filter_value** | optional | Envelope sender filter value | string | `email` |
