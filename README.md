@@ -1,7 +1,7 @@
 # Cisco SMA
 
 Publisher: Splunk \
-Connector Version: 1.0.0 \
+Connector Version: 1.0.1 \
 Product Vendor: Cisco \
 Product Name: Cisco SMA \
 Minimum Product Version: 6.3.0
