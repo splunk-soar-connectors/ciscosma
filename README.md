@@ -90,8 +90,8 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**start_date** | required | Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
-**end_date** | required | End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
+**start_date** | required | Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
+**end_date** | required | End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
 **order_by** | optional | Field to sort results by | string | |
 **order_direction** | optional | Sort direction | string | |
 **offset** | optional | Number of records to skip/offset | numeric | |
@@ -142,8 +142,8 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**start_date** | required | Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
-**end_date** | required | End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
+**start_date** | required | Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
+**end_date** | required | End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
 **quarantines** | required | Comma-separated list of quarantines to search (Outbreak, Virus, File+Analysis, Unclassified, Policy, <user defined quarantine>) | string | |
 **subject_filter_by** | optional | How to filter the subject | string | |
 **subject_filter_value** | optional | Value to filter subject by | string | |
@@ -405,8 +405,8 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**start_date** | required | Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
-**end_date** | required | End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
+**start_date** | required | Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
+**end_date** | required | End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
 **search_option** | optional | Search option type | string | |
 **offset** | optional | Number of records to skip | numeric | |
 **limit** | optional | Maximum number of records to return | numeric | |
@@ -484,8 +484,8 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **message_id** | required | Message ID (mid) to retrieve details for | string | `cisco sma message id` |
 **serial_number** | required | Appliance serial number | string | |
 **icid** | optional | Incoming Connection ID | string | |
-**start_date** | optional | Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
-**end_date** | optional | End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z) | string | |
+**start_date** | optional | Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
+**end_date** | optional | End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
 
 #### Action Output
 
@@ -699,8 +699,8 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**start_date** | required | Start date and time (format: YYYY-MM-DDThh:mm:ss.000Z) | string | |
-**end_date** | required | End date and time (format: YYYY-MM-DDThh:mm:ss.000Z) | string | |
+**start_date** | required | Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
+**end_date** | required | End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01) | string | |
 **report_type** | required | Type of report to retrieve | string | |
 **device_type** | required | Type of device | string | |
 **counter** | optional | Counter group | string | |

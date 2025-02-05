@@ -20,6 +20,7 @@ import os
 import re
 import tempfile
 
+import dateutil.parser as parser
 import phantom.app as phantom
 import requests
 from phantom.action_result import ActionResult
@@ -140,6 +141,23 @@ class CiscoSmaConnector(BaseConnector):
             return action_result.get_status(), None
 
         return phantom.APP_SUCCESS, resp_json
+
+    def _parse_and_format_date(self, date_str, zero_minutes=False, zero_seconds=False):
+        """Helper to parse and format date for Cisco SMA API restrictions.
+
+        Args:
+            date_str: Input date string in any reasonable format
+            zero_minutes: Set minutes to 00
+            zero_seconds: Set seconds to 00
+        """
+        dt = parser.parse(date_str)
+
+        if zero_minutes:
+            dt = dt.replace(minute=0)
+        if zero_seconds:
+            dt = dt.replace(second=0, microsecond=0)
+
+        return dt.strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
     def _sanitize_file_name(self, file_name):
         """Helper to sanitize file name.
@@ -330,6 +348,9 @@ class CiscoSmaConnector(BaseConnector):
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
 
+        start_date = self._parse_and_format_date(start_date, zero_seconds=True)
+        end_date = self._parse_and_format_date(end_date, zero_seconds=True)
+
         offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
         limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
 
@@ -403,6 +424,9 @@ class CiscoSmaConnector(BaseConnector):
         end_date = param.get("end_date")
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
+
+        start_date = self._parse_and_format_date(start_date, zero_seconds=True)
+        end_date = self._parse_and_format_date(end_date, zero_seconds=True)
 
         offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
         limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
@@ -717,6 +741,9 @@ class CiscoSmaConnector(BaseConnector):
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
 
+        start_date = self._parse_and_format_date(start_date, zero_seconds=True)
+        end_date = self._parse_and_format_date(end_date, zero_seconds=True)
+
         offset = param.get("offset", CISCOSMA_DEFAULT_LIST_OFFSET)
         limit = param.get("limit", CISCOSMA_DEFAULT_LIST_LIMIT)
         search_option = param.get("search_option", "messages")
@@ -790,6 +817,11 @@ class CiscoSmaConnector(BaseConnector):
             message_id = int(message_id)
         except ValueError:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'message_id' must be a valid integer")
+
+        if param.get("start_date"):
+            param["start_date"] = self._parse_and_format_date(param.get("start_date"), zero_seconds=True)
+        if param.get("end_date"):
+            param["end_date"] = self._parse_and_format_date(param.get("end_date"), zero_seconds=True)
 
         params = {"mid": message_id, "serialNumber": serial_number}
 
@@ -990,6 +1022,9 @@ class CiscoSmaConnector(BaseConnector):
         device_type = param.get("device_type", "esa")
         if not start_date or not end_date:
             return action_result.set_status(phantom.APP_ERROR, "Both 'start_date' and 'end_date' parameters are required")
+
+        start_date = self._parse_and_format_date(start_date, zero_minutes=True, zero_seconds=True)
+        end_date = self._parse_and_format_date(end_date, zero_minutes=True, zero_seconds=True)
 
         if not report_type:
             return action_result.set_status(phantom.APP_ERROR, "Parameter 'report_type' is required")
