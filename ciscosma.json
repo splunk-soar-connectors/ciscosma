@@ -62,13 +62,13 @@
             "read_only": true,
             "parameters": {
                 "start_date": {
-                    "description": "Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 0
                 },
                 "end_date": {
-                    "description": "End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 1
@@ -280,13 +280,13 @@
             "read_only": true,
             "parameters": {
                 "start_date": {
-                    "description": "Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 0
                 },
                 "end_date": {
-                    "description": "End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 1
@@ -1160,13 +1160,13 @@
             "read_only": true,
             "parameters": {
                 "start_date": {
-                    "description": "Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 0
                 },
                 "end_date": {
-                    "description": "End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 1
@@ -1526,12 +1526,12 @@
                     "order": 2
                 },
                 "start_date": {
-                    "description": "Start date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "order": 3
                 },
                 "end_date": {
-                    "description": "End date in ISO format (YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "order": 4
                 }
@@ -2247,13 +2247,13 @@
             "read_only": true,
             "parameters": {
                 "start_date": {
-                    "description": "Start date and time (format: YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "Start date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 0
                 },
                 "end_date": {
-                    "description": "End date and time (format: YYYY-MM-DDThh:mm:ss.000Z)",
+                    "description": "End date, recommended in ISO format, but most formats accepted (ex: 2001-05-08T08:45:01)",
                     "data_type": "string",
                     "required": true,
                     "order": 1
