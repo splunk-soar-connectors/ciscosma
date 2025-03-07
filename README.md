@@ -1,9 +1,9 @@
-# Cisco SMA
+# Cisco Secure Email and Web Manager
 
 Publisher: Splunk \
 Connector Version: 1.0.1 \
 Product Vendor: Cisco \
-Product Name: Cisco SMA \
+Product Name: Cisco Secure Email and Web Manager \
 Minimum Product Version: 6.3.0
 
 App integration for Cisco SMA, Secure Email and Web Manager
@@ -36,7 +36,7 @@ API Version: **15.5.1**
 
 ### Configuration variables
 
-This table lists the configuration variables required to operate Cisco SMA. These variables are specified when configuring a Cisco SMA asset in Splunk SOAR.
+This table lists the configuration variables required to operate Cisco Secure Email and Web Manager. These variables are specified when configuring a Cisco Secure Email and Web Manager asset in Splunk SOAR.
 
 VARIABLE | REQUIRED | TYPE | DESCRIPTION
 -------- | -------- | ---- | -----------
