@@ -2438,6 +2438,14 @@
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.device_type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.counter",
+                    "data_type": "string"
                 }
             ],
             "render": {

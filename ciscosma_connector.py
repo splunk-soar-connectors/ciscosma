@@ -56,7 +56,7 @@ from ciscosma_consts import (
 
 class CiscoSmaConnector(BaseConnector):
     def __init__(self):
-        super(CiscoSmaConnector, self).__init__()
+        super().__init__()
         self._base_url = None
         self._username = None
         self._password = None
@@ -110,9 +110,9 @@ class CiscoSmaConnector(BaseConnector):
                 return phantom.APP_SUCCESS, response
 
         except requests.exceptions.RequestException as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error connecting to server: {str(e)}"), None
+            return action_result.set_status(phantom.APP_ERROR, f"Error connecting to server: {e!s}"), None
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error making REST call: {str(e)}"), None
+            return action_result.set_status(phantom.APP_ERROR, f"Error making REST call: {e!s}"), None
 
     def _make_authenticated_request(self, action_result, endpoint, headers=None, params=None, data=None, json_data=None, method="get"):
         """Function that makes authenticated REST calls to the app with auth details.
@@ -226,7 +226,7 @@ class CiscoSmaConnector(BaseConnector):
             return True, vault_id, filename, None
 
         except Exception as e:
-            error_msg = f"Error downloading to vault: {str(e)}"
+            error_msg = f"Error downloading to vault: {e!s}"
             return False, None, None, error_msg
 
     def _list_entry_operation_setup(self, param, action):
@@ -409,7 +409,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed search_spam_quarantine_messages")
 
@@ -494,7 +494,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed search_general_quarantine_messages")
 
@@ -525,7 +525,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed get_spam_quarantine_message_details")
 
@@ -564,7 +564,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed get_general_quarantine_message_details")
 
@@ -599,7 +599,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed release_spam_message")
 
@@ -642,7 +642,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed release_general_quarantine_message")
 
@@ -679,7 +679,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed delete_spam_message")
 
@@ -725,7 +725,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed delete_general_quarantine_message")
 
@@ -795,7 +795,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed search_tracking_messages")
 
@@ -848,7 +848,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed get_message_tracking_details")
 
@@ -911,7 +911,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed search_list")
 
@@ -940,7 +940,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed add_list_entry")
 
@@ -969,7 +969,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed edit_list_entry")
 
@@ -1005,7 +1005,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed delete_list_entry")
 
@@ -1081,7 +1081,7 @@ class CiscoSmaConnector(BaseConnector):
             action_result.update_summary(summary)
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error parsing response: {e!s}")
 
         self.save_progress("Successfully completed get_statistics_report")
 
@@ -1143,7 +1143,7 @@ class CiscoSmaConnector(BaseConnector):
             return action_result.set_status(phantom.APP_SUCCESS, f"Successfully downloaded attachment '{filename}' to vault")
 
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, f"Error downloading attachment: {str(e)}")
+            return action_result.set_status(phantom.APP_ERROR, f"Error downloading attachment: {e!s}")
 
     def initialize(self):
         config = self.get_config()

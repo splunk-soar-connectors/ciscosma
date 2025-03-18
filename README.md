@@ -742,6 +742,8 @@ action_result.summary.total_count | numeric | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
 action_result.message | string | | |
+action_result.parameter.device_type | string | | |
+action_result.parameter.counter | string | | |
 
 ## action: 'download attachment'
 
