@@ -1,9 +1,3 @@
-[comment]: # " File: README.md"
-[comment]: # "  Copyright (c) 2019-2025 Splunk Inc."
-[comment]: # ""
-[comment]: # "  Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)"
-[comment]: # ""
-
 ## Steps for connecting to Cisco SMA instance
 
 - Ensure your Cisco SMA instance is accessible from the Splunk SOAR instance
@@ -13,6 +7,7 @@
 - Ensure your desired Cisco SMA user has the necessary permissions and api access for the abilities you aim to use
 
 - Provide the following information in the asset configuration:
+
   - Hostname or IP address of Cisco SMA instance
     - Example: `https://test-sma.com/`
     - Example: `https://10.1.1.1:6443/`
