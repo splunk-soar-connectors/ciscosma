@@ -1,7 +1,7 @@
 # Cisco Secure Email and Web Manager
 
 Publisher: Splunk \
-Connector Version: 1.0.3 \
+Connector Version: 1.0.4 \
 Product Vendor: Cisco \
 Product Name: Cisco Secure Email and Web Manager \
 Minimum Product Version: 6.3.0
