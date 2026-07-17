@@ -60,7 +60,7 @@ class CiscoSmaConnector(BaseConnector):
         self._base_url = None
         self._username = None
         self._password = None
-        self._verify = False
+        self._verify = True
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, json=None, method="get"):
         """Function that makes the REST call to the app.
@@ -1150,7 +1150,7 @@ class CiscoSmaConnector(BaseConnector):
         self._base_url = config["host"].rstrip("/")
         self._username = config["username"]
         self._password = config["password"]
-        self._verify = config.get("verify_server_cert", False)
+        self._verify = config.get("verify_server_cert", True)
         return phantom.APP_SUCCESS
 
     def handle_action(self, param):

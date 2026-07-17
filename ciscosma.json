@@ -41,6 +41,12 @@
             "order": 2,
             "description": "Password for host",
             "required": true
+        },
+        "verify_server_cert": {
+            "data_type": "boolean",
+            "order": 3,
+            "description": "Verify the Cisco SMA server certificate",
+            "default": true
         }
     },
     "actions": [
