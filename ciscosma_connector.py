@@ -19,6 +19,7 @@ import base64
 import os
 import re
 import tempfile
+from urllib.parse import quote
 
 import dateutil.parser as parser
 import phantom.app as phantom
@@ -1063,11 +1064,13 @@ class CiscoSmaConnector(BaseConnector):
                 )
 
         counter = param.get("counter")
+        encoded_report_type = quote(str(report_type), safe="")
 
         if counter:
-            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(f"{report_type}/{counter}")
+            encoded_counter = quote(str(counter), safe="")
+            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(f"{encoded_report_type}/{encoded_counter}")
         else:
-            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(report_type)
+            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(encoded_report_type)
 
         ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params)
 
