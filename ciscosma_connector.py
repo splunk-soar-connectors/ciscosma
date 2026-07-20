@@ -1,6 +1,6 @@
 # File: ciscosma_connector.py
 #
-# Copyright (c) 2025 Splunk Inc.
+# Copyright (c) 2025-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import base64
 import os
 import re
 import tempfile
+from urllib.parse import quote
 
 import dateutil.parser as parser
 import phantom.app as phantom
@@ -60,7 +61,7 @@ class CiscoSmaConnector(BaseConnector):
         self._base_url = None
         self._username = None
         self._password = None
-        self._verify = False
+        self._verify = True
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, json=None, method="get"):
         """Function that makes the REST call to the app.
@@ -1063,11 +1064,13 @@ class CiscoSmaConnector(BaseConnector):
                 )
 
         counter = param.get("counter")
+        encoded_report_type = quote(str(report_type), safe="")
 
         if counter:
-            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(f"{report_type}/{counter}")
+            encoded_counter = quote(str(counter), safe="")
+            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(f"{encoded_report_type}/{encoded_counter}")
         else:
-            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(report_type)
+            endpoint = CISCOSMA_REPORTING_ENDPOINT.format(encoded_report_type)
 
         ret_val, response = self._make_authenticated_request(action_result, endpoint, params=params)
 
@@ -1150,7 +1153,7 @@ class CiscoSmaConnector(BaseConnector):
         self._base_url = config["host"].rstrip("/")
         self._username = config["username"]
         self._password = config["password"]
-        self._verify = config.get("verify_server_cert", False)
+        self._verify = config.get("verify_server_cert", True)
         return phantom.APP_SUCCESS
 
     def handle_action(self, param):

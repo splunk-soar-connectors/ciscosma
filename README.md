@@ -1,9 +1,9 @@
 # Cisco Secure Email and Web Manager
 
-Publisher: Splunk \
-Connector Version: 1.0.4 \
-Product Vendor: Cisco \
-Product Name: Cisco Secure Email and Web Manager \
+Publisher: Splunk <br>
+Connector Version: 1.0.4 <br>
+Product Vendor: Cisco <br>
+Product Name: Cisco Secure Email and Web Manager <br>
 Minimum Product Version: 6.3.0
 
 App integration for Cisco SMA, Secure Email and Web Manager
@@ -43,32 +43,33 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **host** | required | string | Hostname or IP address of Cisco SMA |
 **username** | required | string | Username for host |
 **password** | required | password | Password for host |
+**verify_server_cert** | optional | boolean | Verify the Cisco SMA server certificate |
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[search spam quarantine](#action-search-spam-quarantine) - Search for messages in the spam quarantine \
-[search quarantine](#action-search-quarantine) - Search for messages in Policy, Virus, Outbreak, and other quarantines \
-[get spam message](#action-get-spam-message) - Retrieve details of a spam quarantined message \
-[get quarantine message](#action-get-quarantine-message) - Retrieves details of a message from general quarantine \
-[release spam message](#action-release-spam-message) - Release a spam quarantined message \
-[release quarantine message](#action-release-quarantine-message) - Release a message from Policy, Virus, Outbreak, or other quarantines \
-[delete spam message](#action-delete-spam-message) - Delete a spam quarantined message \
-[delete quarantine message](#action-delete-quarantine-message) - Delete a message from Policy, Virus, Outbreak, or other quarantines \
-[search tracking messages](#action-search-tracking-messages) - Search for messages in message tracking \
-[get tracking details](#action-get-tracking-details) - Retrieve detailed tracking information for a message \
-[search list](#action-search-list) - Search safelist or blocklist entries \
-[add list entry](#action-add-list-entry) - Add an entry to the spam quarantine safelist or blocklist \
-[edit list entry](#action-edit-list-entry) - Edit an entry in the spam quarantine safelist or blocklist \
-[delete list entry](#action-delete-list-entry) - Delete an entry from the spam quarantine safelist or blocklist \
-[get statistics report](#action-get-statistics-report) - Retrieve statistical reports \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[search spam quarantine](#action-search-spam-quarantine) - Search for messages in the spam quarantine <br>
+[search quarantine](#action-search-quarantine) - Search for messages in Policy, Virus, Outbreak, and other quarantines <br>
+[get spam message](#action-get-spam-message) - Retrieve details of a spam quarantined message <br>
+[get quarantine message](#action-get-quarantine-message) - Retrieves details of a message from general quarantine <br>
+[release spam message](#action-release-spam-message) - Release a spam quarantined message <br>
+[release quarantine message](#action-release-quarantine-message) - Release a message from Policy, Virus, Outbreak, or other quarantines <br>
+[delete spam message](#action-delete-spam-message) - Delete a spam quarantined message <br>
+[delete quarantine message](#action-delete-quarantine-message) - Delete a message from Policy, Virus, Outbreak, or other quarantines <br>
+[search tracking messages](#action-search-tracking-messages) - Search for messages in message tracking <br>
+[get tracking details](#action-get-tracking-details) - Retrieve detailed tracking information for a message <br>
+[search list](#action-search-list) - Search safelist or blocklist entries <br>
+[add list entry](#action-add-list-entry) - Add an entry to the spam quarantine safelist or blocklist <br>
+[edit list entry](#action-edit-list-entry) - Edit an entry in the spam quarantine safelist or blocklist <br>
+[delete list entry](#action-delete-list-entry) - Delete an entry from the spam quarantine safelist or blocklist <br>
+[get statistics report](#action-get-statistics-report) - Retrieve statistical reports <br>
 [download attachment](#action-download-attachment) - Download attachment from a message
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -83,7 +84,7 @@ No Output
 
 Search for messages in the spam quarantine
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -135,7 +136,7 @@ action_result.message | string | | |
 
 Search for messages in Policy, Virus, Outbreak, and other quarantines
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -209,7 +210,7 @@ action_result.message | string | | |
 
 Retrieve details of a spam quarantined message
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -241,7 +242,7 @@ action_result.message | string | | |
 
 Retrieves details of a message from general quarantine
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -284,7 +285,7 @@ action_result.message | string | | |
 
 Release a spam quarantined message
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -311,7 +312,7 @@ action_result.message | string | | |
 
 Release a message from Policy, Virus, Outbreak, or other quarantines
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -341,7 +342,7 @@ action_result.message | string | | |
 
 Delete a spam quarantined message
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -368,7 +369,7 @@ action_result.message | string | | |
 
 Delete a message from Policy, Virus, Outbreak, or other quarantines
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -398,7 +399,7 @@ action_result.message | string | | |
 
 Search for messages in message tracking
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -474,7 +475,7 @@ action_result.message | string | | |
 
 Retrieve detailed tracking information for a message
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -533,7 +534,7 @@ action_result.message | string | | |
 
 Search safelist or blocklist entries
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -573,7 +574,7 @@ action_result.message | string | | |
 
 Add an entry to the spam quarantine safelist or blocklist
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -614,7 +615,7 @@ action_result.message | string | | |
 
 Edit an entry in the spam quarantine safelist or blocklist
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -655,7 +656,7 @@ action_result.message | string | | |
 
 Delete an entry from the spam quarantine safelist or blocklist
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -692,7 +693,7 @@ action_result.message | string | | |
 
 Retrieve statistical reports
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -749,7 +750,7 @@ action_result.parameter.counter | string | | |
 
 Download attachment from a message
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -779,7 +780,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
