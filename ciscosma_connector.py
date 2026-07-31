@@ -55,6 +55,16 @@ from ciscosma_consts import (
 )
 
 
+ASYNCOS_REPORT_COMPONENT = re.compile(r"[a-z][a-z0-9_]*")
+
+
+def validate_report_component(value: object, parameter_name: str) -> str:
+    """Validate an AsyncOS report or counter name before path construction."""
+    if not isinstance(value, str) or not ASYNCOS_REPORT_COMPONENT.fullmatch(value):
+        raise ValueError(f"Parameter '{parameter_name}' must be a lowercase AsyncOS report identifier")
+    return quote(value, safe="")
+
+
 class CiscoSmaConnector(BaseConnector):
     def __init__(self):
         super().__init__()
@@ -1064,10 +1074,13 @@ class CiscoSmaConnector(BaseConnector):
                 )
 
         counter = param.get("counter")
-        encoded_report_type = quote(str(report_type), safe="")
+        try:
+            encoded_report_type = validate_report_component(report_type, "report_type")
+            encoded_counter = validate_report_component(counter, "counter") if counter is not None else None
+        except ValueError as exc:
+            return action_result.set_status(phantom.APP_ERROR, str(exc))
 
-        if counter:
-            encoded_counter = quote(str(counter), safe="")
+        if encoded_counter:
             endpoint = CISCOSMA_REPORTING_ENDPOINT.format(f"{encoded_report_type}/{encoded_counter}")
         else:
             endpoint = CISCOSMA_REPORTING_ENDPOINT.format(encoded_report_type)
